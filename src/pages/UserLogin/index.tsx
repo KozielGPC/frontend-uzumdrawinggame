@@ -23,7 +23,7 @@ export default function UserLogin() {
 
     const handleLoginButton = useCallback(async (e: any) => {
         e.preventDefault();
-        // await createUser({username: nickname});
+        await createUser({username: nickname});
         localStorage.setItem('nickname', nickname);
         localStorage.setItem('roomCode', roomCode);
         history.push('/home');
