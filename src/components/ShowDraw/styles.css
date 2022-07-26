@@ -1,0 +1,50 @@
+.draw-content{
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 80%;
+}
+
+.draw-content .draw{
+    margin: 1rem;
+}
+
+.draw-content .buttons{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    padding-top: 1rem;
+}
+
+.draw-content .buttons button{
+    height: 35px;
+    width: 120px;
+    background-color: #3456a1;
+    border: 1px solid #23225f;
+    border-radius: 3px;
+    color: #FFF;
+    padding: 0px 10px;
+    margin: 5px;
+    font-weight: 400;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    transition: filter 0.2s;
+}
+
+.draw-content .options{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+}
+
+
+.draw-content .options input{
+    width: 100%;
+    margin-left: 1rem;
+}

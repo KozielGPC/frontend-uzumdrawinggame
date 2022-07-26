@@ -1,0 +1,28 @@
+.answer-content{
+    margin: 0 auto;
+    display: flex;
+    width: 80%;
+    flex-direction: column;
+    border-radius: 10px;
+    align-items: center;
+}
+
+.answer-content input{
+    height: 50px;
+    width: 120%;
+}
+
+.answer-content button{
+    margin: 15px 5px 5px 5px;
+    height: 35px;
+    width: 120px;
+    background-color: #3456a1;
+    border: 1px solid #23225f;
+    border-radius: 3px;
+    color: #FFF;
+    font-weight: 400;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+}

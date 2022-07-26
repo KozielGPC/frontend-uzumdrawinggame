@@ -48,7 +48,7 @@ export default function UserLogin() {
             <div className="content">
                 <form>
                     <h1>Faça seu Login</h1>
-                    <input placeholder="Nickname"  required  />
+                    <input placeholder="Nickname"  required />
                     <input placeholder="Room Code" required  />
                     <button className="button-green" type="submit">Logar</button>
                     <Link className="button" to="/instructions">Como jogar</Link>
