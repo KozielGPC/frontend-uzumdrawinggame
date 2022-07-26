@@ -26,7 +26,7 @@ export default function UserLogin() {
         // await createUser({username: nickname});
         localStorage.setItem('nickname', nickname);
         localStorage.setItem('roomCode', roomCode);
-        history.push('/instructions');
+        history.push('/home');
     }, [createUser, nickname]);
     // const [nickname, setNickname] = useState("");
     // const [roomCode, setRoomCode] = useState("");
