@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Login, User } from '../interfaces/iUser';
+import { Login, Logoff, User } from '../interfaces/iUser';
 import { UserService } from '../services/UserService';
 
 export const useUser = () => {
@@ -18,8 +18,17 @@ export const useUser = () => {
         return data;
     }, []);
 
+    const logoff = useCallback(async (user: Logoff) => {
+        const { status, data } = await UserService.logoff(user);
+
+        if (status !== 200) throw new Error();
+
+        return data;
+    }, []);
+
     return {
         getall,
         login,
+        logoff,
     };
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
@@ -35,6 +35,10 @@ import rojaoIcon from '../../assets/emotes/rojao.png';
 // const ruim = require ('../../assets/sounds/ruim.mp3');
 
 import ShowDraw from '../../components/ShowDraw';
+import { useUser } from '../../hooks/useUser';
+import { Room } from '../../interfaces/iRoom';
+import { User } from '../../interfaces/iUser';
+import { useRoom } from '../../hooks/useRoom';
 
 // const soundsList = [
 //     { sound: eoq, idSound: 1 },
@@ -52,9 +56,17 @@ import ShowDraw from '../../components/ShowDraw';
 // ]
 
 export default function RegisterUser() {
+    const { getall, login, logoff } = useUser();
+    const { exit } = useRoom();
+
     const nickname = localStorage.getItem('nickname');
-    const token = localStorage.getItem('tokenUser');
-    const roomCode = localStorage.getItem("roomCode");
+    const user_id = localStorage.getItem('user_id');
+    // const token = localStorage.getItem('tokenUser');
+    const roomCode = localStorage.getItem('roomCode');
+    const room_id = localStorage.getItem('room_id');
+
+    const [room, setRoom] = useState<Room>();
+    const [user, setUser] = useState<User>();
 
     const [phrases, setPhrases] = useState([]);
     const [draws, setDraws] = useState([]);
@@ -64,15 +76,15 @@ export default function RegisterUser() {
     const [players, setPlayers] = useState([]);
     const [newPlayers, setNewPlayers] = useState();
 
-    const [phrase, setPhrase] = useState("");
+    const [phrase, setPhrase] = useState('');
 
     const [cu, setCu] = useState([]);
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
 
-    const [drawToShow, setDrawToShow] = useState("");
-    const [phraseToDraw, setPhraseToDraw] = useState("");
+    const [drawToShow, setDrawToShow] = useState('');
+    const [phraseToDraw, setPhraseToDraw] = useState('');
 
     const [activeInitial, setActiveInitial] = useState(0);
     const [activeDraw, setActiveDraw] = useState(0);
@@ -86,6 +98,18 @@ export default function RegisterUser() {
     const [admNick, setAdmNick] = useState();
 
     const history = useHistory();
+
+    const handleLogOffButton = useCallback(async () => {
+        return Promise.resolve(exit({ room_id: room_id ?? '', player_id: user_id ?? '' }))
+            .then(() => logoff({ user_id: user_id ?? '' }))
+            .then(() => {
+                localStorage.clear();
+                history.push('/');
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, []);
 
     // useEffect(() => {
     //     if (!nickname || !token) {
@@ -203,7 +227,7 @@ export default function RegisterUser() {
 
     function handleEmote(idEmote: any) {
         // socket.emit('click-emote', idEmote);
-    };
+    }
 
     async function handleCreateGame() {
         try {
@@ -218,7 +242,7 @@ export default function RegisterUser() {
         } catch (err) {
             alert(err);
         }
-    };
+    }
 
     function deleteLastPhrase() {
         // phrases.splice(0, 1);
@@ -252,8 +276,8 @@ export default function RegisterUser() {
             window.location.reload();
         } catch (err) {
             alert(err);
-        };
-    };
+        }
+    }
 
     // async function sendMessage() {
     //     if (message.length > 0 && message.length <= 50) {
@@ -264,13 +288,13 @@ export default function RegisterUser() {
 
     function emitNext() {
         // socket.emit('emitNext', 'macaco');
-    };
+    }
 
     function restartGame() {
         // socket.emit('restart-game', 'macaco');
         setShowAdm(0);
         setFirstStart(0);
-    };
+    }
 
     return (
         <div className="main-container">
@@ -279,7 +303,11 @@ export default function RegisterUser() {
                     <h2>Nick: {nickname}</h2>
                     <h2>Room: {roomCode}</h2>
                 </div>
-                <div className="red-button"><button type="submit" onClick={() => handleLogoff()}>Deslogar!</button></div>
+                <div className="red-button">
+                    <button type="submit" onClick={() => handleLogOffButton()}>
+                        Deslogar!
+                    </button>
+                </div>
                 {/* <div className="chat">
                     <h2>Chat dos brabo</h2>
                     <div className="messages">
@@ -292,43 +320,51 @@ export default function RegisterUser() {
                     <button type='submit' onClick={() => sendMessage()} >Enviar mensagem</button>
                 </div> */}
             </div>
-            {/* <div className="content">
-                <div className="object" style={activeInitial === 0 ? { display: "none" } : { display: "flex" }}>
+            <div className="content">
+                <div className="object" style={activeInitial === 0 ? { display: 'none' } : { display: 'flex' }}>
                     <input
                         type="text"
-                        placeholder='Digite alguma coisa'
+                        placeholder="Digite alguma coisa"
                         name="phrase"
                         id="phrase"
-                        onChange={e => setPhrase(e.target.value)}
+                        onChange={(e) => setPhrase(e.target.value)}
                         value={phrase}
                     />
-                    <button type="submit" onClick={() => handleCreateGame()} >Enviar!</button>
+                    <button type="submit" onClick={() => handleCreateGame()}>
+                        Enviar!
+                    </button>
                 </div>
 
-                {firstStart === 0 ? null :
+                {firstStart === 0 ? null : (
                     <div className="object">
-                        {results.length === 0 ? <button onClick={() => restartGame()}>Novo jogo</button> : <button onClick={() => emitNext()}>Mostrar próximo</button>}
+                        {results.length === 0 ? (
+                            <button onClick={() => restartGame()}>Novo jogo</button>
+                        ) : (
+                            <button onClick={() => emitNext()}>Mostrar próximo</button>
+                        )}
                     </div>
-                }
+                )}
 
                 <div className="object">
                     <h1>Voce tem {phrases.length} frases para desenhar</h1>
-                    {activeDraw === 0 ? null : <Draw fila={phrases.length} phrase={phraseToDraw} callbackParent={() => deleteLastPhrase()} />}
+                    {activeDraw === 0 ? null : (
+                        <Draw fila={phrases.length} phrase={phraseToDraw} callbackParent={() => deleteLastPhrase()} />
+                    )}
                 </div>
 
-                <div className="object">
+                {/* <div className="object">
                     <h1>Voce tem {draws.length} desenhos para descrever</h1>
                     {activePhrase === 0 ? null : <Answer fila={draws.length} draw={drawToShow} callbackParent={() => deleteLastDraw()} idGame={draws[0].idGame} />}
-                </div>
+                </div> */}
 
-                {showAdm === 0 ? null :
+                {/* {showAdm === 0 ? null :
                     <div className="object">
                         <h1>Voce tem {results.length} jogos para apresentar</h1>
                         {results.length === 0 ? <button onClick={() => restartGame()}>Novo jogo</button> : <button onClick={() => emitNext()}>Mostrar próximo</button>}
                     </div>
-                }
+                } */}
 
-                <div className="show-result">
+                {/* <div className="show-result">
                     {activeResult === 0 ? null :
                         secondaryResults.length > 0 ? secondaryResults.map(result => (
                             result.type === 'draw' ?
@@ -344,18 +380,23 @@ export default function RegisterUser() {
                                 </div>
                         )) : null
                     }
-                </div>
-            </div> */}
+                </div> */}
+            </div>
 
             <div className="side">
                 <div className="users">
                     <h1>Users</h1>
                     <div className="players">
                         <ul>
-                            {players.map(player => (
-                                <li>{admNick === 'player.name' ? <span className="admin">{'player.name'} </span> : <span className="player">{'player.name'} </span>}</li>
-                            ))
-                            }
+                            {players.map((player) => (
+                                <li>
+                                    {admNick === 'player.name' ? (
+                                        <span className="admin">{'player.name'} </span>
+                                    ) : (
+                                        <span className="player">{'player.name'} </span>
+                                    )}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
@@ -364,18 +405,42 @@ export default function RegisterUser() {
                         <h1>Emotes</h1>
                     </div>
                     <div className="emotes-button">
-                        <button className="emote-button" onClick={() => handleEmote(1)}><img src={eoqIcon} alt="eoq" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(2)}><img src={chavesIcon} alt="chaves-aiqburro" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(3)}><img src={cavaloIcon} alt="cavalo" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(4)}><img src={faustaoIcon} alt="faustao-errou" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(5)}><img src={facepalmIcon} alt="facepalm" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(6)}><img src={macacoIcon} alt="macaco" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(7)}><img src={peidoIcon} alt="peido" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(8)}><img src={rojaoIcon} alt="rojao" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(9)}><img src={tanIcon} alt="tan-tan-taaan" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(10)}><img src={tanIcon} alt="tan-tan-taaan" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(11)}><img src={surpriseIcon} alt="surprise-motherf*cker" /></button>
-                        <button className="emote-button" onClick={() => handleEmote(12)}><img src={ruimIcon} alt="ruim-piorou" /></button>
+                        <button className="emote-button" onClick={() => handleEmote(1)}>
+                            <img src={eoqIcon} alt="eoq" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(2)}>
+                            <img src={chavesIcon} alt="chaves-aiqburro" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(3)}>
+                            <img src={cavaloIcon} alt="cavalo" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(4)}>
+                            <img src={faustaoIcon} alt="faustao-errou" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(5)}>
+                            <img src={facepalmIcon} alt="facepalm" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(6)}>
+                            <img src={macacoIcon} alt="macaco" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(7)}>
+                            <img src={peidoIcon} alt="peido" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(8)}>
+                            <img src={rojaoIcon} alt="rojao" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(9)}>
+                            <img src={tanIcon} alt="tan-tan-taaan" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(10)}>
+                            <img src={tanIcon} alt="tan-tan-taaan" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(11)}>
+                            <img src={surpriseIcon} alt="surprise-motherf*cker" />
+                        </button>
+                        <button className="emote-button" onClick={() => handleEmote(12)}>
+                            <img src={ruimIcon} alt="ruim-piorou" />
+                        </button>
                     </div>
                 </div>
             </div>

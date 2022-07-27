@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { JoinRoom, Room } from '../interfaces/iRoom';
+import { ExitRoom, JoinRoom, Room } from '../interfaces/iRoom';
 import { RoomService } from '../services/RoomService';
 
 export const useRoom = () => {
@@ -11,7 +11,25 @@ export const useRoom = () => {
         return data;
     }, []);
 
+    const getPlayers = useCallback(async (room_id: string) => {
+        const { status, data } = await RoomService.getPlayers(room_id);
+
+        if (status !== 200) throw new Error();
+
+        return data;
+    }, []);
+
+    const exit = useCallback(async (exit: ExitRoom) => {
+        const { status, data } = await RoomService.exitRoom(exit);
+
+        if (status !== 200) throw new Error();
+
+        return data;
+    }, []);
+
     return {
         join,
+        exit,
+        getPlayers,
     };
 };

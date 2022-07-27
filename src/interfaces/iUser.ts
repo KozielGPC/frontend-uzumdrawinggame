@@ -72,3 +72,8 @@ export interface User {
 export interface Login {
     username: string;
 }
+
+export interface Logoff {
+    user_id: string;
+}
+    

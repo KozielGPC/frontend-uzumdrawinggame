@@ -32,21 +32,21 @@ export default function UserLogin() {
                 .then(async (user_data) => {
                     const room_data = await join({ room_code: roomCode, user_id: user_data.id });
                     setUser(user_data);
-                    setRoom(room_data);
+                    setRoom(room_data.room);
                     return { user_data, room_data };
                 })
                 .then(({ user_data, room_data }) => {
                     localStorage.setItem('nickname', nickname);
                     localStorage.setItem('user_id', user_data.id);
                     localStorage.setItem('roomCode', roomCode);
-                    localStorage.setItem('room_id', room_data.id);
+                    localStorage.setItem('room_id', room_data.room.id);
                     history.push('/home');
                 })
                 .catch((err) => {
                     console.error(err);
                 });
         },
-        [login, nickname, roomCode, user, room, join]
+        [login, nickname, roomCode, user, room, join],
     );
 
     // async function login(e) {

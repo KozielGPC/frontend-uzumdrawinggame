@@ -4,22 +4,22 @@ import { CompactPicker } from 'react-color';
 import { FiTrash, FiArrowLeft } from 'react-icons/fi'
 import './styles.css';
 
-import socket from '../../components/Socket/index';
+// import socket from '../Socket/index';
 
-import api from '../../services/api';
+// import api from '../../services/api';
 
 export default function Draw(props) {
 
     async function handleSubmit() {
         try {
             if (canvas.getSaveData() !== null) {
-                await api.post('game/update', {
-                    token: localStorage.getItem('tokenUser'),
-                    idGame: props.idGame,
-                    draw: canvas.getSaveData()
-                });
-                socket.emit('send', props.idGame);
-                canvas.clear();
+                // await api.post('game/update', {
+                //     token: localStorage.getItem('tokenUser'),
+                //     idGame: props.idGame,
+                //     draw: canvas.getSaveData()
+                // });
+                // socket.emit('send', props.idGame);
+                // canvas.clear();
             } else {
                 alert('deu erro no desenho ai mano envia de novo');
             }
