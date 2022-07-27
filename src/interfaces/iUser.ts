@@ -69,6 +69,6 @@ export interface User {
         sender_rounds: SenderRound[];
 }
 
-export interface CreateUser {
+export interface Login {
     username: string;
 }

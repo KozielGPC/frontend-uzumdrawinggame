@@ -1,28 +1,25 @@
-import { useCallback, useState } from "react"
-import { CreateUser, User } from "../interfaces/iUser"
-import { UserService } from "../services/UserService"
+import { useCallback, useState } from 'react';
+import { Login, User } from '../interfaces/iUser';
+import { UserService } from '../services/UserService';
 
 export const useUser = () => {
-    const [users, setUsers] = useState<User[]>([])
-    const getall = useCallback( async () => {
-        const {status, data} = await UserService.getall();
+    const getall = useCallback(async () => {
+        const { status, data } = await UserService.getall();
 
-        if (status !== 200)  throw new Error();
+        if (status !== 200) throw new Error();
+        return data;
+    }, []);
 
-        setUsers(data);
-    }, [])
+    const login = useCallback(async (user: Login) => {
+        const { status, data } = await UserService.login(user);
 
-    const createUser = useCallback( async (user: CreateUser) => {
-        const {status, data} = await UserService.createUser(user);
+        if (status !== 201) throw new Error();
 
-        if (status !== 201)  throw new Error();
-
-        setUsers(data);
-    }, [])
+        return data;
+    }, []);
 
     return {
-        users,
         getall,
-        createUser
-    }
-}
+        login,
+    };
+};
