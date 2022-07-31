@@ -3,7 +3,7 @@ import api from '../providers';
 
 const joinRoom = (join: JoinRoom) => api.post<RoomResponse>('/room', join);
 
-const getPlayers = (room_id: string) => api.get<RoomPlayers>(`/room/${room_id}`);
+const getPlayers = (room_id: string | null) => api.get<RoomPlayers>(`/room/${room_id}/players`);
 
 const exitRoom = (exit: ExitRoom) => api.patch<Room>(`/room`, exit);
 

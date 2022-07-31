@@ -37,7 +37,7 @@ import rojaoIcon from '../../assets/emotes/rojao.png';
 
 import ShowDraw from '../../components/ShowDraw';
 import { useUser } from '../../hooks/useUser';
-import { Room } from '../../interfaces/iRoom';
+import { Room, RoomPlayers } from '../../interfaces/iRoom';
 import { User } from '../../interfaces/iUser';
 import { useRoom } from '../../hooks/useRoom';
 import { useMatch } from '../../hooks/useMatch';
@@ -62,7 +62,7 @@ import { EnumRoundType } from '../../interfaces/iRound';
 
 export default function RegisterUser() {
     const { getall, login, logoff } = useUser();
-    const { exit } = useRoom();
+    const { exit, getPlayers } = useRoom();
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
@@ -72,15 +72,15 @@ export default function RegisterUser() {
     const roomCode = localStorage.getItem('roomCode');
     const room_id = localStorage.getItem('room_id');
 
-    const [room, setRoom] = useState<Room>();
-    const [user, setUser] = useState<User>();
+    const [room, setRoom] = useState<Room | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     const [phrases, setPhrases] = useState([]);
     const [draws, setDraws] = useState([]);
     const [results, setResults] = useState([]);
     const [secondaryResults, setSecondaryResults] = useState([]);
 
-    const [players, setPlayers] = useState([]);
+    const [players, setPlayers] = useState<RoomPlayers | null>(null);
     const [newPlayers, setNewPlayers] = useState();
 
     const [phrase, setPhrase] = useState('');
@@ -102,7 +102,7 @@ export default function RegisterUser() {
 
     const [admin, setAdmin] = useState(false);
     const [showAdm, setShowAdm] = useState(0);
-    const [admNick, setAdmNick] = useState();
+    const [admNick, setAdmNick] = useState('');
 
     const history = useHistory();
 
@@ -116,6 +116,18 @@ export default function RegisterUser() {
             .catch((err) => {
                 console.error(err);
             });
+    }, []);
+
+    async function getRoomPlayers() {
+        return Promise.resolve(getPlayers(room_id))
+            .then((roomPlayers) => {
+                setPlayers(roomPlayers);
+            })
+            .catch((err) => console.error(err));
+    }
+    useEffect(() => {
+        setAdmNick(nickname ? nickname : 'admin');
+        getRoomPlayers();
     }, []);
 
     // useEffect(() => {
@@ -288,19 +300,6 @@ export default function RegisterUser() {
         // }
     }
 
-    async function handleLogoff() {
-        try {
-            // socket.emit('sendMessage', { message: 'Saiu da sala', author: nickname });
-            // await api.put('user', { token: localStorage.getItem('tokenUser'), active: false, roomCode: roomCode });
-            // socket.emit('logoff', { isAdm: admin })
-            localStorage.clear();
-            history.push('/');
-            window.location.reload();
-        } catch (err) {
-            alert(err);
-        }
-    }
-
     // async function sendMessage() {
     //     if (message.length > 0 && message.length <= 50) {
     //         socket.emit('sendMessage', { message: message, author: nickname });
@@ -411,12 +410,12 @@ export default function RegisterUser() {
                     <h1>Users</h1>
                     <div className="players">
                         <ul>
-                            {players.map((player) => (
+                            {players?.users.map((player) => (
                                 <li>
-                                    {admNick === 'player.name' ? (
-                                        <span className="admin">{'player.name'} </span>
+                                    {admNick === player.user.username ? (
+                                        <span className="admin">{player.user.username} </span>
                                     ) : (
-                                        <span className="player">{'player.name'} </span>
+                                        <span className="player">{player.user.username} </span>
                                     )}
                                 </li>
                             ))}

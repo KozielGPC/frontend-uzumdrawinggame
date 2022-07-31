@@ -11,7 +11,7 @@ export const useRoom = () => {
         return data;
     }, []);
 
-    const getPlayers = useCallback(async (room_id: string) => {
+    const getPlayers = useCallback(async (room_id: string | null) => {
         const { status, data } = await RoomService.getPlayers(room_id);
 
         if (status !== 200) throw new Error();
