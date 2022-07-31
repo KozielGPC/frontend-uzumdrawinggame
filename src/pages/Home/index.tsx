@@ -4,7 +4,7 @@ import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
 import { v4 as uuidv4 } from 'uuid';
 
-// import socket from '../../components/Socket/index';
+import socket from '../../components/Socket/index';
 
 // import api from '../../services/api';
 
@@ -141,6 +141,9 @@ export default function RegisterUser() {
 
         setAdmNick(room?.room_adm.username ? room?.room_adm.username : 'admin');
         getRoomPlayers();
+        socket.on('msgToClient', (message: string) => {
+            alert('Mensagem recebida: ' + message);
+        });
     }, []);
 
     // useEffect(() => {
