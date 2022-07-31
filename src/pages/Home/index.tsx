@@ -61,8 +61,8 @@ import { EnumRoundType } from '../../interfaces/iRound';
 // ]
 
 export default function RegisterUser() {
-    const { getall, login, logoff } = useUser();
-    const { exit, getPlayers } = useRoom();
+    const { getall, login, logoff, getUser } = useUser();
+    const { exit, getPlayers, getRoom } = useRoom();
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
@@ -126,7 +126,20 @@ export default function RegisterUser() {
             .catch((err) => console.error(err));
     }
     useEffect(() => {
-        setAdmNick(nickname ? nickname : 'admin');
+        const roomRequest = async () => {
+            const room = await getRoom(room_id);
+            setRoom(room);
+        };
+
+        const userRequest = async () => {
+            const user = await getUser(user_id);
+            setUser(user);
+        };
+
+        roomRequest();
+        userRequest();
+
+        setAdmNick(room?.room_adm.username ? room?.room_adm.username : 'admin');
         getRoomPlayers();
     }, []);
 

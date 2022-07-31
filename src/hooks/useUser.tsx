@@ -26,9 +26,18 @@ export const useUser = () => {
         return data;
     }, []);
 
+    const getUser = useCallback(async (user_id: string | null) => {
+        const { status, data } = await UserService.getUser(user_id);
+
+        if (status !== 200) throw new Error();
+
+        return data;
+    }, []);
+
     return {
         getall,
         login,
         logoff,
+        getUser,
     };
 };
