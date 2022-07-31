@@ -59,6 +59,10 @@ import { EnumRoundType } from '../../interfaces/iRound';
 //     { sound: surprise, idSound: 11 },
 //     { sound: ruim, idSound: 12 },
 // ]
+interface Message {
+    text: string;
+    author: string;
+}
 
 export default function RegisterUser() {
     const { getall, login, logoff, getUser } = useUser();
@@ -88,7 +92,7 @@ export default function RegisterUser() {
     const [cu, setCu] = useState([]);
 
     const [message, setMessage] = useState('');
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<Message[]>([]);
 
     const [drawToShow, setDrawToShow] = useState('');
     const [phraseToDraw, setPhraseToDraw] = useState('');
@@ -126,6 +130,18 @@ export default function RegisterUser() {
             .catch((err) => console.error(err));
     }
     useEffect(() => {
+        socket.on('messageReceived', async (data: Message) => {
+            console.log(data);
+
+            setMessages((messages: Message[]) => [...messages, data]);
+
+            console.log(messages);
+        });
+
+        socket.on('logoff', async (data) => {
+            setNewPlayers(data);
+        });
+
         const roomRequest = async () => {
             const room = await getRoom(room_id);
             setRoom(room);
@@ -157,71 +173,62 @@ export default function RegisterUser() {
     // }, [newPlayers]);
 
     // useEffect(() => {
+    // socket.on('login', async data => {
 
-    //     socket.on('login', async data => {
+    //     if (response.data.valid === true) {
+    //         setAdmin(true);
+    //         setFirstStart(1);
+    //     };
+    //     setNewPlayers(data.nickname);
+    //     setAdmNick(data.admNick);
+    // });
+
+    // socket.on('newAdmin', async data => {
+    //     const response = await api.post('checkToken', { token: token, id: data.idAdm });
+    //     if (response.data.valid === true) {
+    //         setAdmin(true);
+    //         socket.emit('sendMessage', { message: " é o novo Admin", author: nickname });
+    //     };
+    //     setAdmNick(data.admNick);
+    // });
+
+    // socket.on('emote-sound', idEmote => {
+    //     let emote = null;
+    //     for (const sound of soundsList) {
+    //         if (sound.idSound === idEmote) emote = sound.sound;
+    //     };
+    //     const audio = new Audio(emote);
+    //     audio.volume = 0.225;
+    //     audio.play();
+    // });
+
+    // socket.on('render', async data => {
+    //     const response = await api.post('checkToken', { token: token, id: data.id_receiver });
+    //     if (response.data.valid === true) {
+    //         if (data.type === 'phrase') {
+    //             setPhrases(phrases => [...phrases, { content: data.content, idGame: data.id_game }]);
+    //         } else {
+    //             setDraws(draws => [...draws, { content: data.content, idGame: data.id_game }]);
+    //         };
+    //     };
+    //     if (data.last === true) {
     //         const response = await api.post('checkToken', { token: token, id: data.admId });
     //         if (response.data.valid === true) {
     //             setAdmin(true);
-    //             setFirstStart(1);
+    //             setShowAdm(1);
     //         };
-    //         setNewPlayers(data.nickname);
-    //         setAdmNick(data.admNick);
-    //     });
+    //         const result = await api.post('getResult', { idGame: data.id_game });
+    //         setResults(results => [...results, result.data]);
+    //     };
+    // });
 
-    //     socket.on('logoff', async data => {
-    //         setNewPlayers(data);
-    //     });
+    // socket.on('showNext', (data) => {
+    //     setCu((cu) => [...cu, data]);
+    // });
 
-    //     socket.on('newAdmin', async data => {
-    //         const response = await api.post('checkToken', { token: token, id: data.idAdm });
-    //         if (response.data.valid === true) {
-    //             setAdmin(true);
-    //             socket.emit('sendMessage', { message: " é o novo Admin", author: nickname });
-    //         };
-    //         setAdmNick(data.admNick);
-    //     });
-
-    //     socket.on('emote-sound', idEmote => {
-    //         let emote = null;
-    //         for (const sound of soundsList) {
-    //             if (sound.idSound === idEmote) emote = sound.sound;
-    //         };
-    //         const audio = new Audio(emote);
-    //         audio.volume = 0.225;
-    //         audio.play();
-    //     });
-
-    //     socket.on('render', async data => {
-    //         const response = await api.post('checkToken', { token: token, id: data.id_receiver });
-    //         if (response.data.valid === true) {
-    //             if (data.type === 'phrase') {
-    //                 setPhrases(phrases => [...phrases, { content: data.content, idGame: data.id_game }]);
-    //             } else {
-    //                 setDraws(draws => [...draws, { content: data.content, idGame: data.id_game }]);
-    //             };
-    //         };
-    //         if (data.last === true) {
-    //             const response = await api.post('checkToken', { token: token, id: data.admId });
-    //             if (response.data.valid === true) {
-    //                 setAdmin(true);
-    //                 setShowAdm(1);
-    //             };
-    //             const result = await api.post('getResult', { idGame: data.id_game });
-    //             setResults(results => [...results, result.data]);
-    //         };
-    //     });
-
-    //     socket.on('messageReceived', async data => {
-    //         setMessages(messages => [...messages, data]);
-    //     });
-
-    //     socket.on('showNext', data => {
-    //         setCu(cu => [...cu, data]);
-    //     });
-
-    //     socket.on('restart-game', data => {
-    //         setActiveInitial(1);
-    //     });
+    // socket.on('restart-game', (data) => {
+    //     setActiveInitial(1);
+    // });
     // }, []);
 
     // useEffect(() => {
@@ -316,12 +323,12 @@ export default function RegisterUser() {
         // }
     }
 
-    // async function sendMessage() {
-    //     if (message.length > 0 && message.length <= 50) {
-    //         socket.emit('sendMessage', { message: message, author: nickname });
-    //         setMessage("");
-    //     };
-    // };
+    async function sendMessage() {
+        if (message.length > 0 && message.length <= 50) {
+            socket.emit('sendMessage', { text: message, author: nickname });
+            setMessage('');
+        }
+    }
 
     function emitNext() {
         // socket.emit('emitNext', 'macaco');
@@ -345,17 +352,27 @@ export default function RegisterUser() {
                         Deslogar!
                     </button>
                 </div>
-                {/* <div className="chat">
+                <div className="chat">
                     <h2>Chat dos brabo</h2>
                     <div className="messages">
-                        {messages.map(m => (
-                            <a className="m"><strong>{m.author + ": "}</strong>{m.message}</a>
-                        ))
-                        }
+                        {messages.map((m) => (
+                            <a className="m">
+                                <strong>{m.author + ': '}</strong>
+                                {m.text}
+                            </a>
+                        ))}
                     </div>
-                    <input maxlength="50" type="text" name="message" value={message} onChange={e => setMessage(e.target.value)} ></input>
-                    <button type='submit' onClick={() => sendMessage()} >Enviar mensagem</button>
-                </div> */}
+                    <input
+                        maxLength={50}
+                        type="text"
+                        name="message"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    ></input>
+                    <button type="submit" onClick={() => sendMessage()}>
+                        Enviar mensagem
+                    </button>
+                </div>
             </div>
             <div className="content">
                 {/* <div className="object" style={{ display: 'flex' }}> */}
