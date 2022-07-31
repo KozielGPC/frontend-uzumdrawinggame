@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
+import { v4 as uuidv4 } from 'uuid';
 
 // import socket from '../../components/Socket/index';
 
@@ -39,6 +40,10 @@ import { useUser } from '../../hooks/useUser';
 import { Room } from '../../interfaces/iRoom';
 import { User } from '../../interfaces/iUser';
 import { useRoom } from '../../hooks/useRoom';
+import { useMatch } from '../../hooks/useMatch';
+import { Match } from '../../interfaces/iMatch';
+import { useRound } from '../../hooks/useRound';
+import { EnumRoundType } from '../../interfaces/iRound';
 
 // const soundsList = [
 //     { sound: eoq, idSound: 1 },
@@ -58,6 +63,8 @@ import { useRoom } from '../../hooks/useRoom';
 export default function RegisterUser() {
     const { getall, login, logoff } = useUser();
     const { exit } = useRoom();
+    const { createMatch } = useMatch();
+    const { createRound } = useRound();
 
     const nickname = localStorage.getItem('nickname');
     const user_id = localStorage.getItem('user_id');
@@ -86,7 +93,7 @@ export default function RegisterUser() {
     const [drawToShow, setDrawToShow] = useState('');
     const [phraseToDraw, setPhraseToDraw] = useState('');
 
-    const [activeInitial, setActiveInitial] = useState(0);
+    const [activeInitial, setActiveInitial] = useState(1);
     const [activeDraw, setActiveDraw] = useState(0);
     const [activePhrase, setActivePhrase] = useState(0);
     const [activeResult, setActiveResult] = useState(0);
@@ -231,14 +238,29 @@ export default function RegisterUser() {
 
     async function handleCreateGame() {
         try {
-            // if (phrase.length === 0) {
-            //     alert("frase vazia piá? tá loco né só pode");
-            // } else {
-            //     const response = await api.post('game/create', { token: token, phrase: phrase, roomCode: roomCode });
-            //     setActiveInitial(0);
-            //     socket.emit('send', response.data.id_game);
-            //     setPhrase('');
-            // }
+            if (phrase.length === 0) {
+                alert('frase vazia piá? tá loco né só pode');
+            } else {
+                return Promise.resolve(
+                    createMatch({ room_id: room_id ?? '', match_adm_id: user_id ?? '', match_id: uuidv4() }),
+                )
+                    .then((match: Match) =>
+                        createRound({
+                            content: phrase,
+                            match_id: match.id,
+                            sender_id: user_id ?? '',
+                            type: EnumRoundType.PHRASE,
+                            receiver_id: match.sort.split(',')[1],
+                        }),
+                    )
+                    .then(() => {
+                        setActiveInitial(0);
+                        setPhrase('');
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            }
         } catch (err) {
             alert(err);
         }
@@ -321,6 +343,7 @@ export default function RegisterUser() {
                 </div> */}
             </div>
             <div className="content">
+                {/* <div className="object" style={{ display: 'flex' }}> */}
                 <div className="object" style={activeInitial === 0 ? { display: 'none' } : { display: 'flex' }}>
                     <input
                         type="text"
