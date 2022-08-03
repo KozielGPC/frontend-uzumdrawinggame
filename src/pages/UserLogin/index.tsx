@@ -4,6 +4,7 @@ import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
 import { Room } from '../../interfaces/iRoom';
 import { User } from '../../interfaces/iUser';
+import socket from '../../components/Socket/index';
 // import axios from 'axios';
 
 import './styles.css';
@@ -41,6 +42,12 @@ export default function UserLogin() {
                     localStorage.setItem('roomCode', roomCode);
                     localStorage.setItem('room_id', room_data.room.id);
                     history.push('/home');
+                    socket.emit('updateRoomPlayers', {
+                        roomCode: roomCode,
+                        room_id: room_data.room.id,
+                        user_id: user_data.id,
+                        nickname: nickname,
+                    });
                 })
                 .catch((err) => {
                     console.error(err);

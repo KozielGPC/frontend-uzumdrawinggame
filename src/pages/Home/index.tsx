@@ -43,7 +43,7 @@ import { useRoom } from '../../hooks/useRoom';
 import { useMatch } from '../../hooks/useMatch';
 import { Match } from '../../interfaces/iMatch';
 import { useRound } from '../../hooks/useRound';
-import { EnumRoundType } from '../../interfaces/iRound';
+import { Content, EnumRoundType, ReceivingRound } from '../../interfaces/iRound';
 
 // const soundsList = [
 //     { sound: eoq, idSound: 1 },
@@ -79,8 +79,8 @@ export default function RegisterUser() {
     const [room, setRoom] = useState<Room | null>(null);
     const [user, setUser] = useState<User | null>(null);
 
-    const [phrases, setPhrases] = useState([]);
-    const [draws, setDraws] = useState([]);
+    const [phrases, setPhrases] = useState<Content[]>([]);
+    const [draws, setDraws] = useState<Content[]>([]);
     const [results, setResults] = useState([]);
     const [secondaryResults, setSecondaryResults] = useState([]);
 
@@ -115,6 +115,12 @@ export default function RegisterUser() {
             .then(() => logoff({ user_id: user_id ?? '' }))
             .then(() => {
                 localStorage.clear();
+                socket.emit('updateRoomPlayers', {
+                    roomCode: roomCode,
+                    room_id: room_id,
+                    user_id: user_id,
+                    nickname: nickname,
+                });
                 history.push('/');
             })
             .catch((err) => {
@@ -131,6 +137,7 @@ export default function RegisterUser() {
     }
     useEffect(() => {
         socket.on('messageReceived', async (data: Message) => {
+            console.log('messageReceived');
             console.log(data);
 
             setMessages((messages: Message[]) => [...messages, data]);
@@ -138,8 +145,33 @@ export default function RegisterUser() {
             console.log(messages);
         });
 
-        socket.on('logoff', async (data) => {
-            setNewPlayers(data);
+        socket.on('updatePlayers', async (data) => {
+            console.log('updatePlayers');
+            console.log(data);
+
+            console.log(`Usuario ${data.nickname} entrou ou saiu da sala ${data.roomCode}`);
+            getRoomPlayers();
+        });
+
+        socket.on('receiveRound', async (data: ReceivingRound) => {
+            console.log('receiveRound');
+            console.log(data);
+
+            if (data.receiver_id == user_id) {
+                switch (data.type) {
+                    case EnumRoundType.PHRASE:
+                        setPhrases((phrases) => [...phrases, { content: data.content, match_id: data.match_id }]);
+                        setPhraseToDraw(data.content);
+                        setActiveDraw(1);
+                        break;
+
+                    case EnumRoundType.DRAW:
+                        setDraws((draws) => [...draws, { content: data.content, match_id: data.match_id }]);
+                        break;
+                    default:
+                        break;
+                }
+            }
         });
 
         const roomRequest = async () => {
@@ -279,15 +311,16 @@ export default function RegisterUser() {
                 return Promise.resolve(
                     createMatch({ room_id: room_id ?? '', match_adm_id: user_id ?? '', match_id: uuidv4() }),
                 )
-                    .then((match: Match) =>
-                        createRound({
+                    .then(async (match: Match) => {
+                        await createRound({
                             content: phrase,
                             match_id: match.id,
                             sender_id: user_id ?? '',
                             type: EnumRoundType.PHRASE,
                             receiver_id: match.sort.split(',')[1],
-                        }),
-                    )
+                        });
+                        socket.emit('sendNextRound', match.id);
+                    })
                     .then(() => {
                         setActiveInitial(0);
                         setPhrase('');
