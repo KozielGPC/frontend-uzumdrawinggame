@@ -79,8 +79,14 @@ export default function RegisterUser() {
     const [room, setRoom] = useState<Room | null>(null);
     const [user, setUser] = useState<User | null>(null);
 
-    const [phrases, setPhrases] = useState<Content[]>([]);
-    const [draws, setDraws] = useState<Content[]>([]);
+    const [phrases, setPhrases] = useState<Content[]>([
+        { content: 'frase 1', match_id: 'id1' },
+        { content: 'frase2', match_id: 'id2' },
+    ]);
+    const [draws, setDraws] = useState<Content[]>([
+        { content: 'frase 1', match_id: 'id1' },
+        { content: 'frase2', match_id: 'id2' },
+    ]);
     const [results, setResults] = useState([]);
     const [secondaryResults, setSecondaryResults] = useState([]);
 
@@ -98,8 +104,8 @@ export default function RegisterUser() {
     const [phraseToDraw, setPhraseToDraw] = useState('');
 
     const [activeInitial, setActiveInitial] = useState(1);
-    const [activeDraw, setActiveDraw] = useState(0);
-    const [activePhrase, setActivePhrase] = useState(0);
+    const [activeDraw, setActiveDraw] = useState(1);
+    const [activePhrase, setActivePhrase] = useState(1);
     const [activeResult, setActiveResult] = useState(0);
 
     const [firstStart, setFirstStart] = useState(0);
@@ -136,6 +142,11 @@ export default function RegisterUser() {
             .catch((err) => console.error(err));
     }
     useEffect(() => {
+        console.log(phrases);
+        phrases.map((phrase) => {
+            console.log(phrase);
+        });
+
         socket.on('messageReceived', async (data: Message) => {
             console.log('messageReceived');
             console.log(data);
@@ -167,6 +178,8 @@ export default function RegisterUser() {
 
                     case EnumRoundType.DRAW:
                         setDraws((draws) => [...draws, { content: data.content, match_id: data.match_id }]);
+                        setDrawToShow(data.content);
+                        setActivePhrase(1);
                         break;
                     default:
                         break;
@@ -433,17 +446,27 @@ export default function RegisterUser() {
                     </div>
                 )}
 
-                <div className="object">
-                    <h1>Voce tem {phrases.length} frases para desenhar</h1>
-                    {activeDraw === 0 ? null : (
-                        <Draw fila={phrases.length} phrase={phraseToDraw} callbackParent={() => deleteLastPhrase()} />
-                    )}
-                </div>
+                <h1>Voce tem {phrases.length} frases para desenhar</h1>
+                {phrases.map((phrase) => (
+                    <div className="object">
+                        <Draw
+                            phrase={phrase.content}
+                            match_id={phrase.match_id}
+                            callbackParent={() => deleteLastPhrase()}
+                        />
+                    </div>
+                ))}
 
-                {/* <div className="object">
-                    <h1>Voce tem {draws.length} desenhos para descrever</h1>
-                    {activePhrase === 0 ? null : <Answer fila={draws.length} draw={drawToShow} callbackParent={() => deleteLastDraw()} idGame={draws[0].idGame} />}
-                </div> */}
+                {/* {activeDraw === 0 ? null : (
+                        <Draw fila={phrases.length} phrase={phraseToDraw} callbackParent={() => deleteLastPhrase()} />
+                    )} */}
+
+                <h1>Voce tem {draws.length} desenhos para descrever</h1>
+                {draws.map((draw) => (
+                    <div className="object">
+                        <Answer draw={draw.content} callbackParent={() => deleteLastDraw()} match_id={draw.match_id} />
+                    </div>
+                ))}
 
                 {/* {showAdm === 0 ? null :
                     <div className="object">
@@ -477,7 +500,7 @@ export default function RegisterUser() {
                     <div className="players">
                         <ul>
                             {players?.users.map((player) => (
-                                <li>
+                                <li key={player.user_id}>
                                     {admNick === player.user.username ? (
                                         <span className="admin">{player.user.username} </span>
                                     ) : (
