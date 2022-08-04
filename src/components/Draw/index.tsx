@@ -4,11 +4,19 @@ import { CompactPicker } from 'react-color';
 import { FiTrash, FiArrowLeft } from 'react-icons/fi';
 import './styles.css';
 
-// import socket from '../Socket/index';
+import socket from '../../components/Socket/index';
+import { EnumRoundType } from '../../interfaces/iRound';
 
 // import api from '../../services/api';
 
-export default function Draw(props: any) {
+interface Props {
+    phrase: string;
+    match_id: string;
+    callbackParent: any;
+    sender_id: string | null;
+}
+
+export default function Draw(props: Props) {
     console.log('props');
 
     console.log(props);
@@ -16,20 +24,20 @@ export default function Draw(props: any) {
     async function handleSubmit() {
         try {
             if (canvas.getSaveData() !== null) {
-                // await api.post('game/update', {
-                //     token: localStorage.getItem('tokenUser'),
-                //     idGame: props.idGame,
-                //     draw: canvas.getSaveData()
-                // });
-                // socket.emit('send', props.idGame);
-                // canvas.clear();
+                const data = {
+                    match_id: props.match_id,
+                    content: canvas.getSaveData(),
+                    sender_id: props.sender_id,
+                    type: EnumRoundType.DRAW,
+                };
+                console.log('data draw: ', data);
+
+                socket.emit('sendRound', data);
             } else {
                 alert('deu erro no desenho ai mano envia de novo');
             }
         } catch (error) {
             alert('deu erro mané - Draw');
-            console.log('id_game:', props.idGame);
-            console.log(error);
         }
     }
 

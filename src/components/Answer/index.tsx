@@ -2,28 +2,37 @@ import React, { useState } from 'react';
 import ShowDraw from '../../components/ShowDraw';
 
 import socket from '../../components/Socket/index';
+import { EnumRoundType } from '../../interfaces/iRound';
 
 import './styles.css';
 
-export default function Answer(props: any) {
+interface Props {
+    draw: string;
+    match_id: string;
+    callbackParent: any;
+    sender_id: string | null;
+}
+
+export default function Answer(props: Props) {
     const [phrase, setPhrase] = useState('');
 
     async function handleSubmit() {
         try {
             if (phrase !== null) {
-                // await api.post('game/update', {
-                //     token: localStorage.getItem('tokenUser'),
-                //     idGame: props.idGame,
-                //     phrase: phrase,
-                // });
-                // socket.emit('send', props.idGame);
-                // setPhrase('');
+                const data = {
+                    match_id: props.match_id,
+                    content: phrase,
+                    sender_id: props.sender_id,
+                    type: EnumRoundType.PHRASE,
+                };
+                console.log('data answer: ', data);
+
+                socket.emit('sendRound', data);
             } else {
                 alert('ia dar erro ai mane, tenta de novo');
             }
         } catch (error) {
             alert('deu erro mané - Answer');
-            console.log('id_game:', props.idGame);
             console.log(error);
         }
     }
