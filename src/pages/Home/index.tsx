@@ -173,13 +173,19 @@ export default function RegisterUser() {
             if (data.receiver_id == user_id) {
                 switch (data.type) {
                     case EnumRoundType.PHRASE:
-                        setPhrases((phrases) => [...phrases, { content: data.content, match_id: data.match_id }]);
+                        setPhrases((phrases) => [
+                            ...phrases,
+                            { content: data.content, match_id: data.match_id, id: phrases.length },
+                        ]);
                         setPhraseToDraw(data.content);
                         setActiveDraw(1);
                         break;
 
                     case EnumRoundType.DRAW:
-                        setDraws((draws) => [...draws, { content: data.content, match_id: data.match_id }]);
+                        setDraws((draws) => [
+                            ...draws,
+                            { content: data.content, match_id: data.match_id, id: phrases.length },
+                        ]);
                         setDrawToShow(data.content);
                         setActivePhrase(1);
                         break;
@@ -353,26 +359,12 @@ export default function RegisterUser() {
         }
     }
 
-    function deleteLastPhrase() {
-        // phrases.splice(0, 1);
-        // setPhrases(phrases);
-        // if (phrases.length === 0) {
-        //     setActiveDraw(0);
-        // }
-        // else {
-        //     setPhraseToDraw(phrases[0].content);
-        // }
+    function deleteLastPhrase(id: number) {
+        setPhrases(phrases.filter((phrase_filter) => phrase_filter.id != id));
     }
 
-    function deleteLastDraw() {
-        // draws.splice(0, 1);
-        // setDraws(draws);
-        // if (draws.length === 0) {
-        //     setActivePhrase(0);
-        // }
-        // else {
-        //     setDrawToShow(draws[0].content);
-        // }
+    function deleteLastDraw(id: number) {
+        setDraws(draws.filter((draw_filter) => draw_filter.id != id));
     }
 
     async function sendMessage() {
@@ -459,7 +451,7 @@ export default function RegisterUser() {
                             sender_id={user_id}
                             phrase={phrase.content}
                             match_id={phrase.match_id}
-                            callbackParent={() => deleteLastPhrase()}
+                            callbackParent={() => deleteLastPhrase(phrase.id)}
                         />
                     </div>
                 ))}
@@ -474,7 +466,7 @@ export default function RegisterUser() {
                         <Answer
                             sender_id={user_id}
                             draw={draw.content}
-                            callbackParent={() => deleteLastDraw()}
+                            callbackParent={() => deleteLastDraw(draw.id)}
                             match_id={draw.match_id}
                         />
                     </div>

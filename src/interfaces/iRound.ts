@@ -54,4 +54,5 @@ export interface ReceivingRound {
 export interface Content {
     content: any;
     match_id: string;
+    id: number;
 }
