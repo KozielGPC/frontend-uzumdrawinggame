@@ -7,8 +7,6 @@ import './styles.css';
 import socket from '../../components/Socket/index';
 import { EnumRoundType } from '../../interfaces/iRound';
 
-// import api from '../../services/api';
-
 interface Props {
     phrase: string;
     match_id: string;

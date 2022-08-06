@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ShowDraw from '../../components/ShowDraw';
 
 import socket from '../../components/Socket/index';
