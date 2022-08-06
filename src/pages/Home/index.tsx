@@ -47,6 +47,7 @@ import { EndMatch, Match, MatchRounds, Round } from '../../interfaces/iMatch';
 import { useRound } from '../../hooks/useRound';
 import { Content, EnumRoundType, ReceivingRound } from '../../interfaces/iRound';
 import api from '../../providers';
+import axios from 'axios';
 
 // const soundsList = [
 //     { sound: eoq, idSound: 1 },
@@ -77,12 +78,13 @@ export default function RegisterUser() {
     const b = true;
     const nickname = localStorage.getItem('nickname');
     const user_id = localStorage.getItem('user_id');
+
     // const token = localStorage.getItem('tokenUser');
     const roomCode = localStorage.getItem('roomCode');
     const room_id = localStorage.getItem('room_id');
 
-    const [room, setRoom] = useState<Room | any>(null);
-    const [user, setUser] = useState<User | any>(null);
+    const [room, setRoom] = useState<Room | any>();
+    const [user, setUser] = useState<User | any>();
 
     const [phrases, setPhrases] = useState<Content[]>([
         // { content: 'frase 1', match_id: 'id1' },
@@ -116,6 +118,7 @@ export default function RegisterUser() {
     const [activePhrase, setActivePhrase] = useState(1);
     const [activeResult, setActiveResult] = useState(0);
 
+    let tentativas = 0;
     const [firstStart, setFirstStart] = useState(0);
 
     const [admin, setAdmin] = useState(false);
@@ -137,6 +140,12 @@ export default function RegisterUser() {
             });
     }, []);
 
+    useEffect(() => {
+        api.get<Room>(`/room/${room_id}`).then((response) => {
+            const sala = response.data;
+            setRoom(sala);
+        });
+    }, []);
     async function getUser() {
         const response = await api.get<User>(`/user/${user_id}`);
         console.log('user do response: ', response.data);
@@ -144,12 +153,12 @@ export default function RegisterUser() {
         setUser(response.data);
     }
 
-    async function getRoom() {
-        const response = await api.get<Room>(`/room/${room_id}`);
-        console.log('room do response: ', response.data);
+    // async function getRoom() {
+    //     const response = await api.get<Room>(`/room/${room_id}`);
+    //     console.log('room do response: ', response.data);
 
-        setRoom(response.data);
-    }
+    //     setRoom(response.data);
+    // }
 
     async function getPlayers() {
         const response = await api.get<RoomPlayers>(`/room/${room_id}/players`);
@@ -158,9 +167,13 @@ export default function RegisterUser() {
         setPlayers(room_players);
     }
     useEffect(() => {
-        getRoom();
+        // getRoom();
         getUser();
         getPlayers();
+
+        console.log(room);
+        console.log(user);
+        console.log(players);
     }, []);
 
     useEffect(() => {
@@ -169,8 +182,11 @@ export default function RegisterUser() {
 
     useEffect(() => {
         if (room && room.room_adm_id == user_id) {
-            setAdmin(true);
+            localStorage.setItem('isAdmin', 'true');
+            setAdmin((previous) => !previous);
             console.log('admin foi setado pra true');
+        } else {
+            localStorage.setItem('isAdmin', 'false');
         }
     }, [user]);
 
@@ -216,21 +232,29 @@ export default function RegisterUser() {
         });
 
         socket.on('endMatch', (data: EndMatch) => {
+            console.log(room);
+            console.log(user);
+            console.log(players);
+            console.log('tentativas: ', tentativas);
+            tentativas += 1;
+            const isadmin = localStorage.getItem('isAdmin');
             console.log(`partida ${data.match_id} acabou`);
             console.log('rounds: ', data.rounds);
 
-            // setResults([...results, data.rounds]);
-            // console.log('results: ', results);
+            setResults([...results, data.rounds]);
+            console.log('results: ', results);
 
-            console.log('admin: ', admin);
+            console.log('admin: ', isadmin);
 
-            if (admin) {
-                console.log('atualizou showadmn');
+            console.log('room do endmatch: ', room);
 
+            if (isadmin == 'true') {
                 setShowAdm(true);
+                console.log('show admin foi setado pra true');
             }
 
             console.log('showadm: ', showAdm);
+            setActiveInitial(1);
         });
 
         socket.on('msgToClient', (message: string) => {

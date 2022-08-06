@@ -16,7 +16,8 @@ interface Props {
 export default function Answer(props: Props) {
     const [phrase, setPhrase] = useState('');
 
-    async function handleSubmit() {
+    async function handleSubmit(e: any) {
+        e.preventDefault();
         try {
             if (phrase !== null) {
                 const data = {
@@ -50,8 +51,8 @@ export default function Answer(props: Props) {
             />
             <button
                 type="submit"
-                onClick={() => {
-                    handleSubmit();
+                onClick={(e) => {
+                    handleSubmit(e);
                     props.callbackParent();
                 }}
             >

@@ -19,7 +19,8 @@ export default function Draw(props: Props) {
 
     console.log(props);
 
-    async function handleSubmit() {
+    async function handleSubmit(e: any) {
+        e.preventDefault();
         try {
             if (canvas.getSaveData() !== null) {
                 const data = {
@@ -89,8 +90,8 @@ export default function Draw(props: Props) {
                 </button>
                 <button
                     type="submit"
-                    onClick={() => {
-                        handleSubmit();
+                    onClick={(e) => {
+                        handleSubmit(e);
                         props.callbackParent();
                     }}
                 >
