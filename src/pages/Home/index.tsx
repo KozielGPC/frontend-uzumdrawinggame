@@ -68,8 +68,10 @@ interface Message {
 }
 
 export default function RegisterUser() {
-    const { getall, login, logoff, getUser } = useUser();
-    const { exit, getPlayers, getRoom } = useRoom();
+    // const { getall, login, logoff, getUser } = useUser();
+    const { getall, login, logoff } = useUser();
+    // const { exit, getPlayers, getRoom } = useRoom();
+    const { exit, getPlayers } = useRoom();
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
@@ -117,7 +119,7 @@ export default function RegisterUser() {
     const [firstStart, setFirstStart] = useState(0);
 
     const [admin, setAdmin] = useState(false);
-    const [showAdm, setShowAdm] = useState(1);
+    const [showAdm, setShowAdm] = useState(0);
     const [admNick, setAdmNick] = useState('');
 
     const history = useHistory();
@@ -139,6 +141,42 @@ export default function RegisterUser() {
                 console.error(err);
             });
     }, []);
+
+    async function getUser() {
+        const response = await api.get<User>(`/user/${user_id}`);
+        console.log('user do response: ', response.data);
+
+        setUser(response.data);
+    }
+
+    async function getRoom() {
+        const response = await api.get<Room>(`/room/${room_id}`);
+        console.log('room do response: ', response.data);
+
+        setRoom(response.data);
+    }
+    useEffect(() => {
+        getRoom();
+        getUser();
+    }, []);
+
+    useEffect(() => {
+        console.log('atualizou room');
+        console.log(room);
+        setAdmNick(room?.room_adm.username);
+    }, [room]);
+
+    useEffect(() => {
+        console.log('atualizou user');
+        console.log(user);
+        console.log('userid', user?.id);
+        console.log('roomadmid', room?.room_adm_id);
+        console.log('username ', user?.username);
+
+        if (room && room.room_adm_id == user_id) {
+            setAdmin(true);
+        }
+    }, [user]);
 
     useEffect(() => {
         socket.on('messageReceived', async (data: Message) => {
@@ -207,7 +245,7 @@ export default function RegisterUser() {
     // socket.on('login', async data => {
 
     //     if (response.data.valid === true) {
-    //         setAdmin(true);
+    //         setAdmin(tqrue);
     //         setFirstStart(1);
     //     };
     //     setNewPlayers(data.nickname);
