@@ -71,10 +71,10 @@ export default function RegisterUser() {
     // const { getall, login, logoff, getUser } = useUser();
     const { getall, login, logoff } = useUser();
     // const { exit, getPlayers, getRoom } = useRoom();
-    const { exit, getPlayers } = useRoom();
+    const { exit } = useRoom();
     const { createMatch } = useMatch();
     const { createRound } = useRound();
-
+    const b = true;
     const nickname = localStorage.getItem('nickname');
     const user_id = localStorage.getItem('user_id');
     // const token = localStorage.getItem('tokenUser');
@@ -119,7 +119,7 @@ export default function RegisterUser() {
     const [firstStart, setFirstStart] = useState(0);
 
     const [admin, setAdmin] = useState(false);
-    const [showAdm, setShowAdm] = useState(0);
+    const [showAdm, setShowAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
 
     const history = useHistory();
@@ -129,12 +129,7 @@ export default function RegisterUser() {
             .then(() => logoff({ user_id: user_id ?? '' }))
             .then(() => {
                 localStorage.clear();
-                socket.emit('updateRoomPlayers', {
-                    roomCode: roomCode,
-                    room_id: room_id,
-                    user_id: user_id,
-                    nickname: nickname,
-                });
+                socket.emit('updateRoomPlayers', room_id);
                 history.push('/');
             })
             .catch((err) => {
@@ -155,28 +150,33 @@ export default function RegisterUser() {
 
         setRoom(response.data);
     }
+
+    async function getPlayers() {
+        const response = await api.get<RoomPlayers>(`/room/${room_id}/players`);
+        const room_players = response.data;
+
+        setPlayers(room_players);
+    }
     useEffect(() => {
         getRoom();
         getUser();
+        getPlayers();
     }, []);
 
     useEffect(() => {
-        console.log('atualizou room');
-        console.log(room);
         setAdmNick(room?.room_adm.username);
     }, [room]);
 
     useEffect(() => {
-        console.log('atualizou user');
-        console.log(user);
-        console.log('userid', user?.id);
-        console.log('roomadmid', room?.room_adm_id);
-        console.log('username ', user?.username);
-
         if (room && room.room_adm_id == user_id) {
             setAdmin(true);
+            console.log('admin foi setado pra true');
         }
     }, [user]);
+
+    useEffect(() => {
+        console.log('admin foi alterado para ', admin);
+    }, [admin]);
 
     useEffect(() => {
         socket.on('messageReceived', async (data: Message) => {
@@ -184,10 +184,9 @@ export default function RegisterUser() {
         });
 
         socket.on('updatePlayers', async (data) => {
-            console.log(`Usuario ${data.nickname} entrou ou saiu da sala ${data.roomCode}`);
-            const room_players = await getPlayers(room_id);
+            console.log('updateplayers data: ', data);
 
-            setPlayers(room_players);
+            setPlayers(data);
         });
 
         socket.on('receiveRound', async (data: ReceivingRound) => {
@@ -217,13 +216,21 @@ export default function RegisterUser() {
         });
 
         socket.on('endMatch', (data: EndMatch) => {
-            console.log(`partida ${data} acabou`);
-            setResults([...results, data.rounds]);
-            console.log('results: ', results);
+            console.log(`partida ${data.match_id} acabou`);
+            console.log('rounds: ', data.rounds);
+
+            // setResults([...results, data.rounds]);
+            // console.log('results: ', results);
+
+            console.log('admin: ', admin);
 
             if (admin) {
-                setShowAdm(1);
+                console.log('atualizou showadmn');
+
+                setShowAdm(true);
             }
+
+            console.log('showadm: ', showAdm);
         });
 
         socket.on('msgToClient', (message: string) => {
@@ -392,7 +399,7 @@ export default function RegisterUser() {
 
     function restartGame() {
         // socket.emit('restart-game', 'macaco');
-        setShowAdm(0);
+        setShowAdm(false);
         setFirstStart(0);
     }
 
@@ -409,6 +416,9 @@ export default function RegisterUser() {
                     </button>
                 </div>
                 <div className="chat">
+                    <h1>
+                        É ADM? : {admin ? 'sim' : 'nao'} b: {b ? 'sim' : 'nao'}
+                    </h1>
                     <h2>Chat dos brabo</h2>
                     <div className="messages">
                         {messages.map((m) => (
@@ -480,7 +490,7 @@ export default function RegisterUser() {
                     </div>
                 ))}
 
-                {showAdm === 0 ? null : (
+                {showAdm ? (
                     <div className="object">
                         <h1>Voce tem {results.length} jogos para apresentar</h1>
                         {results.length === 0 ? (
@@ -489,7 +499,7 @@ export default function RegisterUser() {
                             <button onClick={() => emitNext()}>Mostrar próximo</button>
                         )}
                     </div>
-                )}
+                ) : null}
 
                 <div className="show-result">
                     {activeResult === 0
@@ -517,6 +527,7 @@ export default function RegisterUser() {
             <div className="side">
                 <div className="users">
                     <h1>Users</h1>
+                    <h1>Showadm {showAdm ? 'sim' : 'nao'}</h1>
                     <div className="players">
                         <ul>
                             {players?.users.map((player) => (

@@ -42,12 +42,7 @@ export default function UserLogin() {
                     localStorage.setItem('roomCode', roomCode);
                     localStorage.setItem('room_id', room_data.room.id);
                     history.push('/home');
-                    socket.emit('updateRoomPlayers', {
-                        roomCode: roomCode,
-                        room_id: room_data.room.id,
-                        user_id: user_data.id,
-                        nickname: nickname,
-                    });
+                    socket.emit('updateRoomPlayers', room_data.room.id);
                 })
                 .catch((err) => {
                     console.error(err);
