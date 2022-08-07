@@ -224,7 +224,7 @@ export default function RegisterUser() {
     useEffect(() => {
         if (room && room.room_adm_id == user_id) {
             localStorage.setItem('isAdmin', 'true');
-            setAdmin((previous) => !previous);
+            setAdmin(true);
             console.log('admin foi setado pra true');
         } else {
             localStorage.setItem('isAdmin', 'false');
@@ -295,8 +295,6 @@ export default function RegisterUser() {
             }
 
             console.log('showadm: ', showAdm);
-
-            setActiveInitial(1);
         });
 
         socket.on('showNext', (data: any) => {
@@ -305,6 +303,10 @@ export default function RegisterUser() {
             setextRound();
             teste();
             setCu([...cu, 'macaco']);
+        });
+
+        socket.on('restartGame', (data: any) => {
+            setActiveInitial(1);
         });
     }, []);
 
@@ -375,7 +377,7 @@ export default function RegisterUser() {
     }
 
     function restartGame() {
-        // socket.emit('restart-game', 'macaco');
+        socket.emit('restartGame', 'macaco');
         setShowAdm(false);
         setFirstStart(0);
     }
@@ -419,7 +421,6 @@ export default function RegisterUser() {
                 </div>
             </div>
             <div className="content">
-                {/* <div className="object" style={{ display: 'flex' }}> */}
                 <div className="object" style={activeInitial === 0 ? { display: 'none' } : { display: 'flex' }}>
                     <input
                         type="text"
