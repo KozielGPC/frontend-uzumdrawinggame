@@ -105,7 +105,7 @@ export default function RegisterUser() {
 
     const [phrase, setPhrase] = useState('');
 
-    const [cu, setCu] = useState([]);
+    const [cu, setCu] = useState<string[]>([]);
 
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
@@ -141,9 +141,46 @@ export default function RegisterUser() {
     }, []);
 
     useEffect(() => {
+        console.log('room do useeffect: ', room);
+    }, [room]);
+
+    useEffect(() => {
+        console.log('results do useeffect: ', results);
+    }, [results]);
+
+    function setextRound() {
+        // setSecondaryResults([...secondaryResults, nextround]);
+    }
+    useEffect(() => {
+        console.log('secondaryresults do useeffect: ', secondaryResults);
+    }, [secondaryResults]);
+
+    useEffect(() => {
+        if (results.length !== 0) {
+            setActiveResult(1);
+            if (secondaryResults.length !== results[0].rounds.length) {
+                const nextround = results[0].rounds[secondaryResults.length];
+                console.log('next round: ', nextround);
+
+                setSecondaryResults((secondaryResults: Round[]) => [...secondaryResults, nextround]);
+            } else {
+                results.splice(0, 1);
+                setResults(results);
+                setSecondaryResults([]);
+                if (results.length === 0) {
+                    setActiveResult(0);
+                }
+            }
+        }
+    }, [cu]);
+
+    useEffect(() => {
         api.get<Room>(`/room/${room_id}`).then((response) => {
             const sala = response.data;
+            console.log('room do response: ', response.data);
             setRoom(sala);
+
+            console.log('room do room: ', room);
         });
     }, []);
     async function getUser() {
@@ -241,7 +278,7 @@ export default function RegisterUser() {
             console.log(`partida ${data.match_id} acabou`);
             console.log('rounds: ', data.rounds);
 
-            setResults([...results, data.rounds]);
+            setResults((results: MatchRounds[]) => [...results, data.rounds]);
             console.log('results: ', results);
 
             console.log('admin: ', isadmin);
@@ -254,118 +291,18 @@ export default function RegisterUser() {
             }
 
             console.log('showadm: ', showAdm);
+
             setActiveInitial(1);
         });
 
-        socket.on('msgToClient', (message: string) => {
-            alert('Mensagem recebida: ' + message);
+        socket.on('showNext', (data: any) => {
+            setActiveResult(1);
+            console.log('results do shoqwnext', results);
+            setextRound();
+            teste();
+            setCu([...cu, 'macaco']);
         });
     }, []);
-
-    // useEffect(() => {
-    //     if (!nickname || !token) {
-    //         history.push('/');
-    //     }
-    //     api.get('user?roomCode='+roomCode)
-    //         .then(response => {
-    //             setPlayers(response.data)
-    //         });
-    // }, [newPlayers]);
-
-    // useEffect(() => {
-    // socket.on('login', async data => {
-
-    //     if (response.data.valid === true) {
-    //         setAdmin(tqrue);
-    //         setFirstStart(1);
-    //     };
-    //     setNewPlayers(data.nickname);
-    //     setAdmNick(data.admNick);
-    // });
-
-    // socket.on('newAdmin', async data => {
-    //     const response = await api.post('checkToken', { token: token, id: data.idAdm });
-    //     if (response.data.valid === true) {
-    //         setAdmin(true);
-    //         socket.emit('sendMessage', { message: " é o novo Admin", author: nickname });
-    //     };
-    //     setAdmNick(data.admNick);
-    // });
-
-    // socket.on('emote-sound', idEmote => {
-    //     let emote = null;
-    //     for (const sound of soundsList) {
-    //         if (sound.idSound === idEmote) emote = sound.sound;
-    //     };
-    //     const audio = new Audio(emote);
-    //     audio.volume = 0.225;
-    //     audio.play();
-    // });
-
-    // socket.on('render', async data => {
-    //     const response = await api.post('checkToken', { token: token, id: data.id_receiver });
-    //     if (response.data.valid === true) {
-    //         if (data.type === 'phrase') {
-    //             setPhrases(phrases => [...phrases, { content: data.content, idGame: data.id_game }]);
-    //         } else {
-    //             setDraws(draws => [...draws, { content: data.content, idGame: data.id_game }]);
-    //         };
-    //     };
-    //     if (data.last === true) {
-    //         const response = await api.post('checkToken', { token: token, id: data.admId });
-    //         if (response.data.valid === true) {
-    //             setAdmin(true);
-    //             setShowAdm(1);
-    //         };
-    //         const result = await api.post('getResult', { idGame: data.id_game });
-    //         setResults(results => [...results, result.data]);
-    //     };
-    // });
-
-    // socket.on('showNext', (data) => {
-    //     setCu((cu) => [...cu, data]);
-    // });
-
-    // socket.on('restart-game', (data) => {
-    //     setActiveInitial(1);
-    // });
-    // }, []);
-
-    // useEffect(() => {
-    //     if (phrases.length !== 0) {
-    //         setPhraseToDraw(phrases[0].content);
-    //         setActiveDraw(1);
-    //     }
-    //     else {
-    //         setActiveDraw(0);
-    //     }
-    // }, [phrases]);
-
-    // useEffect(() => {
-    //     if (draws.length !== 0) {
-    //         setDrawToShow(draws[0].content);
-    //         setActivePhrase(1);
-    //     }
-    //     else {
-    //         setActivePhrase(0);
-    //     }
-    // }, [draws]);
-
-    // useEffect(() => {
-    //     if (results.length !== 0) {
-    //         setActiveResult(1);
-    //         if (secondaryResults.length !== results[0].length) {
-    //             setSecondaryResults(secondaryResults => [results[0][secondaryResults.length], ...secondaryResults]);
-    //         } else {
-    //             results.splice(0, 1);
-    //             setResults(results);
-    //             setSecondaryResults([]);
-    //             if (results.length === 0) {
-    //                 setActiveResult(0);
-    //             };
-    //         };
-    //     };
-    // }, [cu]);
 
     function handleEmote(idEmote: any) {
         // socket.emit('click-emote', idEmote);
@@ -418,7 +355,15 @@ export default function RegisterUser() {
     }
 
     function emitNext() {
-        // socket.emit('emitNext', 'macaco');
+        console.log('results: ', results);
+        console.log('secondaryResults: ', secondaryResults);
+        console.log('activeResult: ', activeResult);
+
+        socket.emit('addShowRound', 'macaco');
+    }
+
+    function teste() {
+        console.log('secondaryResults teste: ', secondaryResults);
     }
 
     function restartGame() {
