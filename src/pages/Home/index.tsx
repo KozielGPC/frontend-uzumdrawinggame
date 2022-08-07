@@ -148,6 +148,10 @@ export default function RegisterUser() {
         console.log('results do useeffect: ', results);
     }, [results]);
 
+    useEffect(() => {
+        updateScroll();
+    }, [messages]);
+
     function setextRound() {
         // setSecondaryResults([...secondaryResults, nextround]);
     }
@@ -354,6 +358,10 @@ export default function RegisterUser() {
         }
     }
 
+    function updateScroll() {
+        var element: any = document.getElementById('chat');
+        element.scrollTop = element.scrollHeight;
+    }
     function emitNext() {
         console.log('results: ', results);
         console.log('secondaryResults: ', secondaryResults);
@@ -389,7 +397,8 @@ export default function RegisterUser() {
                         É ADM? : {admin ? 'sim' : 'nao'} b: {b ? 'sim' : 'nao'}
                     </h1>
                     <h2>Chat dos brabo</h2>
-                    <div className="messages">
+
+                    <div className="messages" id="chat">
                         {messages.map((m) => (
                             <a className="m">
                                 <strong>{m.author + ': '}</strong>
