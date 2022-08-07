@@ -353,7 +353,8 @@ export default function RegisterUser() {
         setDraws(draws.filter((draw_filter) => draw_filter.id != id));
     }
 
-    async function sendMessage() {
+    async function sendMessage(e: any) {
+        e.preventDefault();
         if (message.length > 0 && message.length <= 50) {
             socket.emit('sendMessage', { text: message, author: nickname });
             setMessage('');
@@ -408,16 +409,18 @@ export default function RegisterUser() {
                             </a>
                         ))}
                     </div>
-                    <input
-                        maxLength={50}
-                        type="text"
-                        name="message"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    ></input>
-                    <button type="submit" onClick={() => sendMessage()}>
-                        Enviar mensagem
-                    </button>
+                    <form onSubmit={sendMessage}>
+                        <input
+                            maxLength={50}
+                            type="text"
+                            name="message"
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                        ></input>
+                        <button type="submit" onClick={(e) => sendMessage(e)}>
+                            Enviar mensagem
+                        </button>
+                    </form>
                 </div>
             </div>
             <div className="content">
