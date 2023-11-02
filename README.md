@@ -10,6 +10,11 @@ UzumDrawingGame is a game developed by Uzum Team. In this game, each player will
 
 ![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/9a480441-0262-436f-a21a-674e2467de55)
 
+![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/bc9a6b20-c63d-4de1-9506-311ade015748)
+
+![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/549d7a59-810c-4854-bc58-cd97fed48891)
+
+![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/9bf7ec57-3206-4344-99e4-bdfb523dd4d6)
 
 ## Backend Repository
 - https://github.com/KozielGPC/api-uzumdrawinggame
