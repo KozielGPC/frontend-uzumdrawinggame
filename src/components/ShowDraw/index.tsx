@@ -4,6 +4,7 @@ import './styles.css';
 interface Props {
     draw: string;
 }
+
 export default function ShowDraw(props: Props) {
     return (
         <div className="draw-content">

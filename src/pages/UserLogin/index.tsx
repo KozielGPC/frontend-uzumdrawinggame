@@ -5,12 +5,8 @@ import { useUser } from '../../hooks/useUser';
 import { Room } from '../../interfaces/iRoom';
 import { User } from '../../interfaces/iUser';
 import socket from '../../components/Socket/index';
-// import axios from 'axios';
 
 import './styles.css';
-// import api from '../../services/api';
-
-// import socket from '../../components/Socket/index';
 
 export default function UserLogin() {
     const [nickname, setNickname] = useState('');
@@ -22,34 +18,27 @@ export default function UserLogin() {
     const { getall, login } = useUser();
     const { join } = useRoom();
 
-    useEffect(() => {
-        getall();
-    }, [getall]);
-
-    const handleLoginButton = useCallback(
-        async (e: any) => {
-            e.preventDefault();
-            await Promise.resolve(login({ username: nickname }))
-                .then(async (user_data) => {
-                    const room_data = await join({ room_code: roomCode, user_id: user_data.id });
-                    setUser(user_data);
-                    setRoom(room_data.room);
-                    return { user_data, room_data };
-                })
-                .then(({ user_data, room_data }) => {
-                    localStorage.setItem('nickname', nickname);
-                    localStorage.setItem('user_id', user_data.id);
-                    localStorage.setItem('roomCode', roomCode);
-                    localStorage.setItem('room_id', room_data.room.id);
-                    history.push('/home');
-                    socket.emit('updateRoomPlayers', room_data.room.id);
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-        },
-        [login, nickname, roomCode, user, room, join],
-    );
+    const handleLoginButton = async (e: any) => {
+        e.preventDefault();
+        await Promise.resolve(login({ username: nickname }))
+            .then(async (user_data) => {
+                const room_data = await join({ room_code: roomCode, user_id: user_data.id });
+                setUser(user_data);
+                setRoom(room_data.room);
+                return { user_data, room_data };
+            })
+            .then(({ user_data, room_data }) => {
+                localStorage.setItem('nickname', nickname);
+                localStorage.setItem('user_id', user_data.id);
+                localStorage.setItem('roomCode', roomCode);
+                localStorage.setItem('room_id', room_data.room.id);
+                history.push('/home');
+                socket.emit('updateRoomPlayers', room_data.room.id);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
 
     // async function login(e) {
     //     console.log(nickname, roomCode);
