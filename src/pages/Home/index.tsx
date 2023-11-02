@@ -392,14 +392,14 @@ export default function RegisterUser() {
                 </div>
                 <div className="red-button">
                     <button type="submit" onClick={() => handleLogOffButton()}>
-                        Deslogar!
+                        Logout!
                     </button>
                 </div>
                 <div className="chat">
-                    <h1>
+                    {/* <h1>
                         É ADM? : {admin ? 'sim' : 'nao'} b: {b ? 'sim' : 'nao'}
-                    </h1>
-                    <h2>Chat dos brabo</h2>
+                    </h1> */}
+                    <h2>Game chat</h2>
 
                     <div className="messages" id="chat">
                         {messages.map((m) => (
@@ -418,7 +418,7 @@ export default function RegisterUser() {
                             onChange={(e) => setMessage(e.target.value)}
                         ></input>
                         <button type="submit" onClick={(e) => sendMessage(e)}>
-                            Enviar mensagem
+                            Send message
                         </button>
                     </form>
                 </div>
@@ -427,14 +427,14 @@ export default function RegisterUser() {
                 <div className="object" style={activeInitial === 0 ? { display: 'none' } : { display: 'flex' }}>
                     <input
                         type="text"
-                        placeholder="Digite alguma coisa"
+                        placeholder="Write a random sentence, for example, a red dog skateboarding"
                         name="phrase"
                         id="phrase"
                         onChange={(e) => setPhrase(e.target.value)}
                         value={phrase}
                     />
                     <button type="submit" onClick={() => handleCreateGame()}>
-                        Enviar!
+                        Submit
                     </button>
                 </div>
 
@@ -448,7 +448,7 @@ export default function RegisterUser() {
                     </div>
                 )}
 
-                <h1>Voce tem {phrases.length} frases para desenhar</h1>
+                <h1>You have {phrases.length} sentences to draw</h1>
                 {phrases.map((phrase) => (
                     <div className="object">
                         <Draw
@@ -460,7 +460,7 @@ export default function RegisterUser() {
                     </div>
                 ))}
 
-                <h1>Voce tem {draws.length} desenhos para descrever</h1>
+                <h1>You have {draws.length} drawings to describe</h1>
                 {draws.map((draw) => (
                     <div className="object">
                         <Answer
@@ -474,11 +474,11 @@ export default function RegisterUser() {
 
                 {showAdm ? (
                     <div className="object">
-                        <h1>Voce tem {results.length} jogos para apresentar</h1>
+                        <h1>You have {results.length} game to show</h1>
                         {results.length === 0 ? (
-                            <button onClick={() => restartGame()}>Novo jogo</button>
+                            <button onClick={() => restartGame()}>New game</button>
                         ) : (
-                            <button onClick={() => emitNext()}>Mostrar próximo</button>
+                            <button onClick={() => emitNext()}>Show next</button>
                         )}
                     </div>
                 ) : null}
@@ -509,7 +509,7 @@ export default function RegisterUser() {
             <div className="side">
                 <div className="users">
                     <h1>Users</h1>
-                    <h1>Showadm {showAdm ? 'sim' : 'nao'}</h1>
+                    {/* <h1>Showadm {showAdm ? 'sim' : 'nao'}</h1> */}
                     <div className="players">
                         <ul>
                             {players?.users.map((player) => (

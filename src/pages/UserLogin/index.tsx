@@ -81,7 +81,7 @@ export default function UserLogin() {
         <div className="logon-container">
             <div className="content">
                 <form onSubmit={handleLoginButton}>
-                    <h1>Faça seu Login</h1>
+                    <h1>Login</h1>
                     <input
                         placeholder="Nickname"
                         value={nickname}
@@ -95,10 +95,10 @@ export default function UserLogin() {
                         onChange={(e) => setRoomCode(e.target.value)}
                     />
                     <button className="button-green" type="submit">
-                        Logar
+                        Login
                     </button>
                     <Link className="button" to="/instructions">
-                        Como jogar
+                        How to play
                     </Link>
                 </form>
             </div>

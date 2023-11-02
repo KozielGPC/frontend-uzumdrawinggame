@@ -45,7 +45,7 @@ export default function Draw(props: Props) {
     const [canvas, setCanvas] = useState<any>();
     return (
         <div className="draw-content">
-            <h2>Desenhe: {props.phrase}</h2>
+            <h2>Draw: {props.phrase}</h2>
             <div className="draw">
                 <CanvasDraw
                     loadTimeOffset={8}
@@ -79,14 +79,14 @@ export default function Draw(props: Props) {
                         canvas.undo();
                     }}
                 >
-                    <FiArrowLeft /> Desfazer
+                    <FiArrowLeft /> Undo
                 </button>
                 <button
                     onClick={() => {
                         canvas.clear();
                     }}
                 >
-                    <FiTrash /> Limpar
+                    <FiTrash /> Clear
                 </button>
                 <button
                     type="submit"
@@ -95,7 +95,7 @@ export default function Draw(props: Props) {
                         props.callbackParent();
                     }}
                 >
-                    Enviar!
+                    Send!
                 </button>
             </div>
         </div>

@@ -43,7 +43,7 @@ export default function Answer(props: Props) {
             <ShowDraw draw={props.draw} />
             <input
                 type="text"
-                placeholder="Digite o que você está pensando"
+                placeholder="What do you think this represents?"
                 name="answer"
                 id="answer"
                 value={phrase}
@@ -56,7 +56,7 @@ export default function Answer(props: Props) {
                     props.callbackParent();
                 }}
             >
-                Enviar!
+                Send!
             </button>
         </div>
     );

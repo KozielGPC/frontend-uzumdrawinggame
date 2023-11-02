@@ -1,40 +1,36 @@
 import React from 'react';
 
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 import './styles.css';
 
-export default function Instructions(){
-    return(
+export default function Instructions() {
+    return (
         <div className="container">
             <div className="content">
                 <div className="title">
-                    <h1>Como Jogar</h1>
+                    <h1>How to Play</h1>
                 </div>
-                
+
                 <div className="text">
-                <ol>
-                    <li>
-                        Escolha um nick, entre em uma sala e inicie a partida
-                    </li>
-                    <li>
-                        Na primeira rodada, todos os jogadores escrevem frases aleatórias e enviam uns para os outros
-                    </li>
-                    <li>
-                         Após isso cada um recebe uma frase e desenha o que está escrito
-                    </li>
-                    <li>
-                        Depois de enviar o desenho o jogador pode receber uma frase ou um desenho. 
-                        Se receber um desenho, escreve o que acha que pode ser.
-                        Se receber uma frase, desenha o que está escrito
-                    </li>
-                    <li>
-                        Assim se segue até a última rodada, onde os jogadores podem mostrar 
-                        toda a sequência feita e ver o que mudou em cada uma
-                    </li>
-                </ol>
+                    <ol>
+                        <li>Choose a nickname, join a room and start a game</li>
+                        <li>In the first round, all the players write random sentences and send them to each other</li>
+                        <li>After that, each one receives a sentence and draws what is written</li>
+                        <li>
+                            After sending the drawing, the player can receive either a sentence or a drawing. If they
+                            receive a drawing, they write what they think it could be. If they receive a sentence, they
+                            draw what is written
+                        </li>
+                        <li>
+                            This continues until the final round, where the players can display the entire sequence
+                            created and see what has changed in each one
+                        </li>
+                    </ol>
                 </div>
-                <Link to ="/" className="button">Voltar</Link>
+                <Link to="/" className="button">
+                    Home
+                </Link>
             </div>
         </div>
     );
