@@ -1,5 +1,11 @@
 ## About 
-UzumDrawingGame is a game developed by Uzum Team. In this game, each player will type a phrase then send it to some random player. The next player will receive this phrase and will have to draw it. He will send the draw to another random player, and keep doing this until every player have participated in this sequence. At the end, the room Admin will show all the sequence for the players and see what was in the begin and what have become in the end.
+UzumDrawingGame is a game developed by Uzum Team. In this game, each player will type a sentence then send it to some random player. The next player will receive this sentence and will have to draw it. He will send the draw to another random player, and keep doing this until every player have participated in this sequence. At the end, the room Admin will show all the sequence for the players and see what was in the begin and what have become in the end.
+
+## Used Technologies
+- TypeScript
+- React.JS
+- Socket.io
+- React Canvas Draw
 
 ## ScreenShots
 ![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/fd6d69bc-9fcb-4c9c-bffb-3d8c51c7fc29)
