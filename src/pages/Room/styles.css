@@ -18,73 +18,6 @@
     justify-content: flex-start;
 }
 
-.main-container .side ul li{
-    list-style: none;
-    font-size: 20px;
-}
-
-.main-container .side .user-data{
-    color: #FFF;
-    padding: 1rem;
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    margin-top: 2rem;
-    background-color: #201E50;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
-
-.main-container .side .user-data h2{
-    padding: 5px 30px;
-    background-color: #1D4E89;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
-
-.main-container .side .users{
-    padding: 1rem;
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    margin-top: 2rem;
-    color: #FFF;
-    background-color: #201E50;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-    border-radius: 10px;
-}
-
-.main-container .side .users .players{
-    font-size: large;
-    font-weight: 450;
-    text-align: center;
-    display: inline;
-    margin: 3px;
-    padding: 5px;
-    background-color: #1D4E89;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
-
-.main-container .side .users .players li{
-    margin: 7px;
-}
-
-.main-container .side .users h1{
-    margin-bottom: 1rem;
-}
-
-.main-container .side .users h2{
-    margin-bottom: 0.5rem;
-
-}
-
 .main-container .side > button{
     margin-top: 16px;
     margin-bottom: 40px;
@@ -161,47 +94,6 @@
     cursor: url('../../assets/cursor.cur'), auto;
 }
 
-.emotes{
-    display: flex;
-    flex-direction: column; 
-}
-
-.emotes-title{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.emotes-button{
-    display: grid;
-    grid-template-columns: auto auto auto;
-}
-
-.emote-button{
-    background-color:#dfdfdf;
-    padding: 10px;
-    border: 1px solid #b1b1b1;
-    margin: 2px;
-    border-radius: 7px;
-    width: 127px;
-    height: 127px;
-}
-
-.emote-button img{
-    max-width: 105px;
-    max-height: 105px;
-}
-
-.chat{
-    box-shadow: 0 0 50px rgba( 200, 200, 200, 200);
-    border-radius: 8px;
-    height: 400px;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
-    max-height: 500px;
-}
-
 button{
     width: 100%;
     height: 20%;
@@ -217,33 +109,12 @@ button{
     margin-top: 10px;
 }
 
-.chat form{
-    width: 100%;
-    height: 100%;
-}
+
 
 input{
     margin-top: 10px;
 }
 
-.chat .messages{
-    padding-top: 5px;
-    border: 2px solid #1D4E89;
-    border-radius: 3px;
-    margin-top: 10px;
-    text-align: left;
-    padding-left: 5px;
-    display: grid;
-    overflow: auto;
-    height: 150px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.chat a{
-    font-size: 18px;
-}
 
 .render {
     padding-bottom: 15px;
@@ -282,27 +153,3 @@ input{
     background-color: #201E50;
 }
 
-.side .red-button{
-    width: 100%;
-}
-
-.red-button button{
-    background-color: #E02041;
-    border: 1px solid #751223;
-    margin-top: 16px;
-    margin-bottom: 40px;
-    width: 100%;
-    height: 60px;
-    border-radius: 8px;
-    color: #FFF;
-    font-weight: 700;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    font-size: 18px;
-    transition: filter 0.2s;
-}
-
-.admin{
-    color: #ace67d;
-}
