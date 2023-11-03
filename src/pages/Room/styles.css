@@ -192,15 +192,7 @@
     max-height: 105px;
 }
 
-.chat{
-    box-shadow: 0 0 50px rgba( 200, 200, 200, 200);
-    border-radius: 8px;
-    height: 400px;
-    width: 100%;
-    text-align: center;
-    padding: 20px;
-    max-height: 500px;
-}
+
 
 button{
     width: 100%;
@@ -217,33 +209,12 @@ button{
     margin-top: 10px;
 }
 
-.chat form{
-    width: 100%;
-    height: 100%;
-}
+
 
 input{
     margin-top: 10px;
 }
 
-.chat .messages{
-    padding-top: 5px;
-    border: 2px solid #1D4E89;
-    border-radius: 3px;
-    margin-top: 10px;
-    text-align: left;
-    padding-left: 5px;
-    display: grid;
-    overflow: auto;
-    height: 150px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.chat a{
-    font-size: 18px;
-}
 
 .render {
     padding-bottom: 15px;

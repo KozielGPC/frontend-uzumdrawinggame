@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import socket from '../../components/Socket/index';
+import './styles.css';
 
 interface Message {
     text: string;
