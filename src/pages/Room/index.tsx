@@ -43,6 +43,7 @@ import { useRound } from '../../hooks/useRound';
 import { Content, EnumRoundType, ReceivingRound } from '../../interfaces/iRound';
 import api from '../../providers';
 import Chat from '../../components/Chat';
+import RoomInfo from '../../components/RoomInfo';
 
 // const soundsList = [
 //     { sound: eoq, idSound: 1 },
@@ -60,9 +61,6 @@ import Chat from '../../components/Chat';
 // ]
 
 export default function RoomPage() {
-    const { getall, login, logoff } = useUser();
-
-    const { exit } = useRoom();
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
@@ -107,21 +105,6 @@ export default function RoomPage() {
     const [admin, setAdmin] = useState(false);
     const [showAdm, setShowAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
-
-    const history = useHistory();
-
-    const handleLogOffButton = useCallback(async () => {
-        return Promise.resolve(exit({ room_id: room_id ?? '', player_id: user_id ?? '' }))
-            .then(() => logoff({ user_id: user_id ?? '' }))
-            .then(() => {
-                localStorage.clear();
-                socket.emit('updateRoomPlayers', room_id);
-                history.push('/');
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, []);
 
     useEffect(() => {
         if (results.length !== 0) {
@@ -316,15 +299,12 @@ export default function RoomPage() {
     return (
         <div className="main-container">
             <div className="side">
-                <div className="user-data">
-                    <h2>Nick: {nickname}</h2>
-                    <h2>Room: {roomCode}</h2>
-                </div>
-                <div className="red-button">
-                    <button type="submit" onClick={() => handleLogOffButton()}>
-                        Logout!
-                    </button>
-                </div>
+                <RoomInfo
+                    nickname={nickname ?? 'nickname'}
+                    roomCode={roomCode ?? 'roomCode'}
+                    room_id={room_id ?? ''}
+                    user_id={user_id ?? ''}
+                />
                 <Chat nickname={nickname ?? 'nickname'} />
             </div>
             <div className="content">

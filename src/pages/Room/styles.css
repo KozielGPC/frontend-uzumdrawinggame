@@ -23,27 +23,7 @@
     font-size: 20px;
 }
 
-.main-container .side .user-data{
-    color: #FFF;
-    padding: 1rem;
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-evenly;
-    margin-top: 2rem;
-    background-color: #201E50;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
 
-.main-container .side .user-data h2{
-    padding: 5px 30px;
-    background-color: #1D4E89;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
 
 .main-container .side .users{
     padding: 1rem;
@@ -253,26 +233,7 @@ input{
     background-color: #201E50;
 }
 
-.side .red-button{
-    width: 100%;
-}
 
-.red-button button{
-    background-color: #E02041;
-    border: 1px solid #751223;
-    margin-top: 16px;
-    margin-bottom: 40px;
-    width: 100%;
-    height: 60px;
-    border-radius: 8px;
-    color: #FFF;
-    font-weight: 700;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-    font-size: 18px;
-    transition: filter 0.2s;
-}
 
 .admin{
     color: #ace67d;
