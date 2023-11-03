@@ -18,53 +18,6 @@
     justify-content: flex-start;
 }
 
-.main-container .side ul li{
-    list-style: none;
-    font-size: 20px;
-}
-
-
-
-.main-container .side .users{
-    padding: 1rem;
-    width: 100%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    margin-top: 2rem;
-    color: #FFF;
-    background-color: #201E50;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-    border-radius: 10px;
-}
-
-.main-container .side .users .players{
-    font-size: large;
-    font-weight: 450;
-    text-align: center;
-    display: inline;
-    margin: 3px;
-    padding: 5px;
-    background-color: #1D4E89;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(10, 10, 10, 10);
-}
-
-.main-container .side .users .players li{
-    margin: 7px;
-}
-
-.main-container .side .users h1{
-    margin-bottom: 1rem;
-}
-
-.main-container .side .users h2{
-    margin-bottom: 0.5rem;
-
-}
-
 .main-container .side > button{
     margin-top: 16px;
     margin-bottom: 40px;
@@ -233,8 +186,3 @@ input{
     background-color: #201E50;
 }
 
-
-
-.admin{
-    color: #ace67d;
-}
