@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
 import { v4 as uuidv4 } from 'uuid';
@@ -50,21 +50,16 @@ export default function RoomPage() {
 
     const [cu, setCu] = useState<string[]>([]);
 
-    const [drawToShow, setDrawToShow] = useState('');
-    const [phraseToDraw, setPhraseToDraw] = useState('');
-
     const [activeInitial, setActiveInitial] = useState(1);
-    const [activeDraw, setActiveDraw] = useState(1);
-    const [activePhrase, setActivePhrase] = useState(1);
     const [activeResult, setActiveResult] = useState(0);
 
     let tentativas = 0;
     const [firstStart, setFirstStart] = useState(0);
 
-    const [admin, setAdmin] = useState(false);
     const [showAdm, setShowAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
 
+    // logic to show game sequence
     useEffect(() => {
         if (results.length !== 0) {
             setActiveResult(1);
@@ -84,28 +79,12 @@ export default function RoomPage() {
         }
     }, [cu]);
 
-    useEffect(() => {
-        api.get<Room>(`/room/${room_id}`).then((response) => {
-            const sala = response.data;
-            console.log('room do response: ', response.data);
-            setRoom(sala);
-
-            console.log('room do room: ', room);
-        });
-    }, []);
     async function getUser() {
         const response = await api.get<User>(`/user/${user_id}`);
         console.log('user do response: ', response.data);
 
         setUser(response.data);
     }
-
-    // async function getRoom() {
-    //     const response = await api.get<Room>(`/room/${room_id}`);
-    //     console.log('room do response: ', response.data);
-
-    //     setRoom(response.data);
-    // }
 
     async function getPlayers() {
         const response = await api.get<RoomPlayers>(`/room/${room_id}/players`);
@@ -115,41 +94,41 @@ export default function RoomPage() {
     }
 
     useEffect(() => {
-        getUser();
-        getPlayers();
-    }, []);
-
-    useEffect(() => {
         setAdmNick(room?.room_adm.username);
     }, [room]);
 
     useEffect(() => {
-        if (room && room.room_adm_id == user_id) {
+        if (room && room.room_adm_id === user_id) {
             localStorage.setItem('isAdmin', 'true');
-            setAdmin(true);
-            console.log('admin foi setado pra true');
         } else {
             localStorage.setItem('isAdmin', 'false');
         }
     }, [user]);
 
     useEffect(() => {
-        socket.on('updatePlayers', async (data) => {
-            console.log('updateplayers data: ', data);
+        getUser();
+        getPlayers();
 
+        api.get<Room>(`/room/${room_id}`).then((response) => {
+            const sala = response.data;
+            console.log('room do response: ', response.data);
+            setRoom(sala);
+
+            console.log('room do room: ', room);
+        });
+
+        socket.on('updatePlayers', async (data) => {
             setPlayers(data);
         });
 
         socket.on('receiveRound', async (data: ReceivingRound) => {
-            if (data.receiver_id == user_id) {
+            if (data.receiver_id === user_id) {
                 switch (data.type) {
                     case EnumRoundType.PHRASE:
                         setPhrases((phrases) => [
                             ...phrases,
                             { content: data.content, match_id: data.match_id, id: phrases.length },
                         ]);
-                        setPhraseToDraw(data.content);
-                        setActiveDraw(1);
                         break;
 
                     case EnumRoundType.DRAW:
@@ -157,8 +136,6 @@ export default function RoomPage() {
                             ...draws,
                             { content: data.content, match_id: data.match_id, id: phrases.length },
                         ]);
-                        setDrawToShow(data.content);
-                        setActivePhrase(1);
                         break;
                     default:
                         break;
@@ -183,7 +160,7 @@ export default function RoomPage() {
 
             console.log('room do endmatch: ', room);
 
-            if (isadmin == 'true') {
+            if (isadmin === 'true') {
                 setShowAdm(true);
                 console.log('show admin foi setado pra true');
             }
@@ -234,11 +211,11 @@ export default function RoomPage() {
     }
 
     function deleteLastPhrase(id: number) {
-        setPhrases(phrases.filter((phrase_filter) => phrase_filter.id != id));
+        setPhrases(phrases.filter((phrase_filter) => phrase_filter.id !== id));
     }
 
     function deleteLastDraw(id: number) {
-        setDraws(draws.filter((draw_filter) => draw_filter.id != id));
+        setDraws(draws.filter((draw_filter) => draw_filter.id !== id));
     }
 
     function emitNext() {
@@ -346,7 +323,7 @@ export default function RoomPage() {
             </div>
 
             <div className="side">
-                <UsersList adm_nick={admNick ?? ''}  players={players ?? { users: [], room_adm: user }}/>
+                <UsersList adm_nick={admNick ?? ''} players={players ?? { users: [], room_adm: user }} />
                 <EmotesList />
             </div>
         </div>
