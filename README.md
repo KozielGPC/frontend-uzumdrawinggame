@@ -22,5 +22,15 @@ UzumDrawingGame is a game developed by Uzum Team. In this game, each player will
 
 ![image](https://github.com/KozielGPC/frontend-uzumdrawinggame/assets/37910437/9bf7ec57-3206-4344-99e4-bdfb523dd4d6)
 
+## Steps to run
+
+```
+yarn install
+```
+
+```
+yarn start
+```
+
 ## Backend Repository
 - https://github.com/KozielGPC/api-uzumdrawinggame
