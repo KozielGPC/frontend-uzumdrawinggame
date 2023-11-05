@@ -40,17 +40,14 @@ export default function Chat(props: Props) {
 
     return (
         <div className="chat">
-            {/* <h1>
-        É ADM? : {admin ? 'sim' : 'nao'} b: {b ? 'sim' : 'nao'}
-    </h1> */}
             <h2>Game chat</h2>
 
             <div className="messages" id="chat">
                 {messages.map((m) => (
-                    <a className="m">
+                    <p className="m">
                         <strong>{m.author + ': '}</strong>
                         {m.text}
-                    </a>
+                    </p>
                 ))}
             </div>
             <form onSubmit={sendMessage}>

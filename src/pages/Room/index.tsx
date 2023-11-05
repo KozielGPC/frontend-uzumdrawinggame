@@ -19,6 +19,7 @@ import RoomInfo from '../../components/RoomInfo';
 import UsersList from '../../components/UsersList';
 import EmotesList from '../../components/EmotesList';
 import { UserContext } from '../../context/UserContext';
+import { useHistory } from 'react-router-dom';
 
 export default function RoomPage() {
     const { createMatch } = useMatch();
@@ -47,12 +48,12 @@ export default function RoomPage() {
     const [activeInitial, setActiveInitial] = useState(1);
     const [activeResult, setActiveResult] = useState(0);
 
-    let tentativas = 0;
     const [firstStart, setFirstStart] = useState(0);
 
     const [showAdm, setShowAdm] = useState(false);
-    const [isAdm, setIsAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
+
+    const history = useHistory();
 
     // logic to show game sequence
     useEffect(() => {
@@ -119,8 +120,6 @@ export default function RoomPage() {
         });
 
         socket.on('endMatch', (data: EndMatch) => {
-            tentativas += 1;
-
             setResults((results: MatchRounds[]) => [...results, data.rounds]);
 
             if (isAdm === true) {
@@ -187,6 +186,9 @@ export default function RoomPage() {
         setFirstStart(0);
     }
 
+    if (room === null || user === null) {
+        history.push('/');
+    }
     return (
         <div className="main-container">
             <div className="side">

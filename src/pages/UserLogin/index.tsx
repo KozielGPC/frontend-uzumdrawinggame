@@ -14,12 +14,12 @@ export default function UserLogin() {
     const [roomCode, setRoomCode] = useState('');
 
     const { setRoom, setUser } = useContext(UserContext);
-    const { getall, login } = useUser();
+    const { login } = useUser();
     const { join } = useRoom();
 
-    const handleLoginButton = async (e: any) => {
+    const handleLoginButton = (e: any) => {
         e.preventDefault();
-        await Promise.resolve(login({ username: nickname }))
+        login({ username: nickname })
             .then(async (user_data) => {
                 const room_data = await join({ room_code: roomCode, user_id: user_data.id });
                 return { user_data, room_data };
@@ -27,11 +27,12 @@ export default function UserLogin() {
             .then(({ user_data, room_data }) => {
                 setUser(user_data);
                 setRoom(room_data.room);
-                history.push('/home');
+                history.push('/play');
                 socket.emit('updateRoomPlayers', room_data.room.id);
             })
             .catch((err) => {
                 console.error(err);
+                alert(err);
             });
     };
 
