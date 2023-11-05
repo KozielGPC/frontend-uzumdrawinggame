@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,16 +18,13 @@ import Chat from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import UsersList from '../../components/UsersList';
 import EmotesList from '../../components/EmotesList';
+import { UserContext } from '../../context/UserContext';
 
 export default function RoomPage() {
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
-    const nickname = localStorage.getItem('nickname');
-    const user_id = localStorage.getItem('user_id');
-
-    const roomCode = localStorage.getItem('roomCode');
-    const room_id = localStorage.getItem('room_id');
+    const { nickname, roomCode, room_id, user_id } = useContext(UserContext);
 
     const [room, setRoom] = useState<Room | any>();
     const [user, setUser] = useState<User | any>();

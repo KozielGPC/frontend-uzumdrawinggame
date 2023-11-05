@@ -1,20 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
-import { Room } from '../../interfaces/iRoom';
-import { User } from '../../interfaces/iUser';
 import socket from '../../components/Socket/index';
 
 import './styles.css';
 
+import { UserContext } from '../../context/UserContext';
+
 export default function UserLogin() {
-    const [nickname, setNickname] = useState('');
-    const [roomCode, setRoomCode] = useState('');
-    const [room, setRoom] = useState<Room>();
-    const [user, setUser] = useState<User>();
     const history = useHistory();
 
+    const { nickname, setNickname, roomCode, setRoomCode, setRoomId, setUserId } = useContext(UserContext);
     const { getall, login } = useUser();
     const { join } = useRoom();
 
@@ -23,15 +20,12 @@ export default function UserLogin() {
         await Promise.resolve(login({ username: nickname }))
             .then(async (user_data) => {
                 const room_data = await join({ room_code: roomCode, user_id: user_data.id });
-                setUser(user_data);
-                setRoom(room_data.room);
                 return { user_data, room_data };
             })
             .then(({ user_data, room_data }) => {
-                localStorage.setItem('nickname', nickname);
-                localStorage.setItem('user_id', user_data.id);
-                localStorage.setItem('roomCode', roomCode);
-                localStorage.setItem('room_id', room_data.room.id);
+                setUserId(user_data.id);
+                setRoomId(room_data.room.id);
+                setRoomCode(roomCode);
                 history.push('/home');
                 socket.emit('updateRoomPlayers', room_data.room.id);
             })
