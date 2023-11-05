@@ -26,7 +26,6 @@ export default function Answer(props: Props) {
                     sender_id: props.sender_id,
                     type: EnumRoundType.PHRASE,
                 };
-                console.log('data answer: ', data);
 
                 socket.emit('sendRound', data);
             } else {

@@ -59,6 +59,6 @@ export interface Room {
 }
 
 export interface RoomPlayers {
-    room_adm: RoomAdm;
+    room_adm?: RoomAdm | null;
     users: Player[];
 }

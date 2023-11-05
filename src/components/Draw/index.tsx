@@ -15,10 +15,6 @@ interface Props {
 }
 
 export default function Draw(props: Props) {
-    console.log('props');
-
-    console.log(props);
-
     async function handleSubmit(e: any) {
         e.preventDefault();
         try {
@@ -29,7 +25,6 @@ export default function Draw(props: Props) {
                     sender_id: props.sender_id,
                     type: EnumRoundType.DRAW,
                 };
-                console.log('data draw: ', data);
 
                 socket.emit('sendRound', data);
             } else {
@@ -64,7 +59,6 @@ export default function Draw(props: Props) {
                     color={selectedColor}
                     onChangeComplete={(color) => {
                         setSelectedColor(color.hex);
-                        console.log(color);
                     }}
                 />
                 <input

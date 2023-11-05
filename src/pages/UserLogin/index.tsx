@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
@@ -10,8 +10,10 @@ import { UserContext } from '../../context/UserContext';
 
 export default function UserLogin() {
     const history = useHistory();
+    const [nickname, setNickname] = useState('');
+    const [roomCode, setRoomCode] = useState('');
 
-    const { nickname, setNickname, roomCode, setRoomCode, setRoomId, setUserId } = useContext(UserContext);
+    const { setRoom, setUser } = useContext(UserContext);
     const { getall, login } = useUser();
     const { join } = useRoom();
 
@@ -23,9 +25,8 @@ export default function UserLogin() {
                 return { user_data, room_data };
             })
             .then(({ user_data, room_data }) => {
-                setUserId(user_data.id);
-                setRoomId(room_data.room.id);
-                setRoomCode(roomCode);
+                setUser(user_data);
+                setRoom(room_data.room);
                 history.push('/home');
                 socket.emit('updateRoomPlayers', room_data.room.id);
             })
