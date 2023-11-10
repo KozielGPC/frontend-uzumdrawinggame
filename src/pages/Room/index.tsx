@@ -20,6 +20,7 @@ import UsersList from '../../components/UsersList';
 import EmotesList from '../../components/EmotesList';
 import { UserContext } from '../../context/UserContext';
 import { useHistory } from 'react-router-dom';
+import { useUser } from '../../hooks/useUser';
 
 export default function RoomPage() {
     const { createMatch } = useMatch();
@@ -52,6 +53,8 @@ export default function RoomPage() {
 
     const [showAdm, setShowAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
+
+    const { logoff } = useUser();
 
     const history = useHistory();
 
@@ -135,6 +138,16 @@ export default function RoomPage() {
         socket.on('restartGame', (data: any) => {
             setActiveInitial(1);
         });
+
+        const handleBeforeUnload = (event: any) => {
+            logoff({ user_id: user?.id ?? '' });
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
     }, []);
 
     async function handleCreateGame() {
