@@ -29,6 +29,7 @@ export default function UserLogin() {
                 setRoom(room_data.room);
                 history.push('/play');
                 socket.emit('updateRoomPlayers', room_data.room.id);
+                socket.emit('sendMessage', { text: 'Entrou na sala', author: nickname });
             })
             .catch((err) => {
                 console.error(err);
@@ -49,7 +50,7 @@ export default function UserLogin() {
     //         localStorage.setItem('nickname', nickname);
     //         localStorage.setItem('roomCode', roomCode);
 
-    //         // socket.emit('sendMessage', { message: 'Entrou na sala', author: nickname });
+    //         //
 
     //         // history.push('/home');
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { CreateRound } from '../interfaces/iRound';
 import { RoundService } from '../services/RoundService';
 

@@ -23,6 +23,7 @@ export default function RoomInfo(props: Props) {
             .then(() => {
                 localStorage.clear();
                 socket.emit('updateRoomPlayers', props.room_id);
+                socket.emit('sendMessage', { text: 'Saiu da sala', author: props.nickname });
                 history.push('/');
             })
             .catch((err) => {
