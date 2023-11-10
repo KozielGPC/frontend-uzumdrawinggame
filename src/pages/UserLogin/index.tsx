@@ -33,35 +33,9 @@ export default function UserLogin() {
             })
             .catch((err) => {
                 console.error(err);
-                alert(err);
+                alert('This user is already logged in!');
             });
     };
-
-    // async function login(e) {
-    //     console.log(nickname, roomCode);
-    //     e.preventDefault();
-
-    //     try {
-
-    //         // const response =
-    //         const response = await api.post('user', { username: nickname });
-
-    //         // localStorage.setItem('tokenUser', response.data.token);
-    //         localStorage.setItem('nickname', nickname);
-    //         localStorage.setItem('roomCode', roomCode);
-
-    //         //
-
-    //         // history.push('/home');
-
-    //         // socket.emit('login', { nickname: nickname, roomCode: roomCode });
-
-    //     } catch (err) {
-    //         console.log(err);
-    //         alert("Este usuário ja está logado");
-    //         console.log("Erro no login: " + err);
-    //     }
-    // }
 
     return (
         <div className="logon-container">
