@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
 import { v4 as uuidv4 } from 'uuid';
 
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import './styles.css';
 
 import ShowDraw from '../../components/ShowDraw';
@@ -13,24 +13,20 @@ import { useMatch } from '../../hooks/useMatch';
 import { EndMatch, Match, MatchRounds, Round } from '../../interfaces/iMatch';
 import { useRound } from '../../hooks/useRound';
 import { Content, EnumRoundType, ReceivingRound } from '../../interfaces/iRound';
-import api from '../../providers';
+import api from '../../providers/api';
 import Chat from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import UsersList from '../../components/UsersList';
 import EmotesList from '../../components/EmotesList';
+import { UserContext } from '../../context/UserContext';
+import { useHistory } from 'react-router-dom';
+import { useUser } from '../../hooks/useUser';
 
 export default function RoomPage() {
     const { createMatch } = useMatch();
     const { createRound } = useRound();
 
-    const nickname = localStorage.getItem('nickname');
-    const user_id = localStorage.getItem('user_id');
-
-    const roomCode = localStorage.getItem('roomCode');
-    const room_id = localStorage.getItem('room_id');
-
-    const [room, setRoom] = useState<Room | any>();
-    const [user, setUser] = useState<User | any>();
+    const { user, room }: { user: User | null; room: Room | null } = useContext(UserContext);
 
     const [phrases, setPhrases] = useState<Content[]>([
         // { content: 'frase 1', match_id: 'id1' },
@@ -53,11 +49,14 @@ export default function RoomPage() {
     const [activeInitial, setActiveInitial] = useState(1);
     const [activeResult, setActiveResult] = useState(0);
 
-    let tentativas = 0;
     const [firstStart, setFirstStart] = useState(0);
 
     const [showAdm, setShowAdm] = useState(false);
     const [admNick, setAdmNick] = useState('');
+
+    const { logoff } = useUser();
+
+    const history = useHistory();
 
     // logic to show game sequence
     useEffect(() => {
@@ -65,8 +64,6 @@ export default function RoomPage() {
             setActiveResult(1);
             if (secondaryResults.length !== results[0].rounds.length) {
                 const nextround = results[0].rounds[secondaryResults.length];
-                console.log('next round: ', nextround);
-
                 setSecondaryResults((secondaryResults: Round[]) => [...secondaryResults, nextround]);
             } else {
                 results.splice(0, 1);
@@ -79,50 +76,32 @@ export default function RoomPage() {
         }
     }, [cu]);
 
-    async function getUser() {
-        const response = await api.get<User>(`/user/${user_id}`);
-        console.log('user do response: ', response.data);
-
-        setUser(response.data);
-    }
-
     async function getPlayers() {
-        const response = await api.get<RoomPlayers>(`/room/${room_id}/players`);
+        const response = await api.get<RoomPlayers>(`/room/${room?.id}/players`);
         const room_players = response.data;
 
         setPlayers(room_players);
     }
 
     useEffect(() => {
-        setAdmNick(room?.room_adm.username);
-    }, [room]);
+        setAdmNick(room?.room_adm?.username ?? '');
 
-    useEffect(() => {
-        if (room && room.room_adm_id === user_id) {
-            localStorage.setItem('isAdmin', 'true');
-        } else {
-            localStorage.setItem('isAdmin', 'false');
-        }
-    }, [user]);
-
-    useEffect(() => {
-        getUser();
         getPlayers();
-
-        api.get<Room>(`/room/${room_id}`).then((response) => {
-            const sala = response.data;
-            console.log('room do response: ', response.data);
-            setRoom(sala);
-
-            console.log('room do room: ', room);
-        });
 
         socket.on('updatePlayers', async (data) => {
             setPlayers(data);
         });
+    }, [room]);
 
+    useEffect(() => {
+        let isAdm = false;
+        if (room && room.room_adm_id === user?.id) {
+            isAdm = true;
+        } else {
+            isAdm = false;
+        }
         socket.on('receiveRound', async (data: ReceivingRound) => {
-            if (data.receiver_id === user_id) {
+            if (data.receiver_id === user?.id) {
                 switch (data.type) {
                     case EnumRoundType.PHRASE:
                         setPhrases((phrases) => [
@@ -144,39 +123,31 @@ export default function RoomPage() {
         });
 
         socket.on('endMatch', (data: EndMatch) => {
-            console.log(room);
-            console.log(user);
-            console.log(players);
-            console.log('tentativas: ', tentativas);
-            tentativas += 1;
-            const isadmin = localStorage.getItem('isAdmin');
-            console.log(`partida ${data.match_id} acabou`);
-            console.log('rounds: ', data.rounds);
-
             setResults((results: MatchRounds[]) => [...results, data.rounds]);
-            console.log('results: ', results);
 
-            console.log('admin: ', isadmin);
-
-            console.log('room do endmatch: ', room);
-
-            if (isadmin === 'true') {
+            if (isAdm === true) {
                 setShowAdm(true);
-                console.log('show admin foi setado pra true');
             }
-
-            console.log('showadm: ', showAdm);
         });
 
         socket.on('showNext', (data: any) => {
             setActiveResult(1);
-            console.log('results do shoqwnext', results);
             setCu([...cu, 'macaco']);
         });
 
         socket.on('restartGame', (data: any) => {
             setActiveInitial(1);
         });
+
+        const handleBeforeUnload = (event: any) => {
+            logoff({ user_id: user?.id ?? '' });
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
     }, []);
 
     async function handleCreateGame() {
@@ -185,13 +156,13 @@ export default function RoomPage() {
                 alert('frase vazia piá? tá loco né só pode');
             } else {
                 return Promise.resolve(
-                    createMatch({ room_id: room_id ?? '', match_adm_id: user_id ?? '', match_id: uuidv4() }),
+                    createMatch({ room_id: room?.id ?? '', match_adm_id: user?.id ?? '', match_id: uuidv4() }),
                 )
                     .then(async (match: Match) => {
                         await createRound({
                             content: phrase,
                             match_id: match.id,
-                            sender_id: user_id ?? '',
+                            sender_id: user?.id ?? '',
                             type: EnumRoundType.PHRASE,
                             receiver_id: match.sort.split(',')[1],
                         });
@@ -228,16 +199,19 @@ export default function RoomPage() {
         setFirstStart(0);
     }
 
+    if (room === null || user === null) {
+        history.push('/');
+    }
     return (
         <div className="main-container">
             <div className="side">
                 <RoomInfo
-                    nickname={nickname ?? 'nickname'}
-                    roomCode={roomCode ?? 'roomCode'}
-                    room_id={room_id ?? ''}
-                    user_id={user_id ?? ''}
+                    nickname={user?.username ?? 'nickname'}
+                    roomCode={room?.room_code ?? 'roomCode'}
+                    room_id={room?.id ?? ''}
+                    user_id={user?.id ?? ''}
                 />
-                <Chat nickname={nickname ?? 'nickname'} />
+                <Chat nickname={user?.username ?? 'nickname'} />
             </div>
             <div className="content">
                 <div className="object" style={activeInitial === 0 ? { display: 'none' } : { display: 'flex' }}>
@@ -268,7 +242,7 @@ export default function RoomPage() {
                 {phrases.map((phrase) => (
                     <div className="object">
                         <Draw
-                            sender_id={user_id}
+                            sender_id={user?.id ?? ''}
                             phrase={phrase.content}
                             match_id={phrase.match_id}
                             callbackParent={() => deleteLastPhrase(phrase.id)}
@@ -280,7 +254,7 @@ export default function RoomPage() {
                 {draws.map((draw) => (
                     <div className="object">
                         <Answer
-                            sender_id={user_id}
+                            sender_id={user?.id ?? ''}
                             draw={draw.content}
                             callbackParent={() => deleteLastDraw(draw.id)}
                             match_id={draw.match_id}

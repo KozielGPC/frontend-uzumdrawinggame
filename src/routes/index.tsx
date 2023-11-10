@@ -7,7 +7,7 @@ export default function Routes() {
         <BrowserRouter>
             <Switch>
                 <Route path="/" exact component={UserLogin} />
-                <Route path="/home" exact component={RoomPage} />
+                <Route path="/play" exact component={RoomPage} />
                 <Route path="/instructions" exact component={Instructions} />
                 <Route path="*">
                     <Redirect to="/" />

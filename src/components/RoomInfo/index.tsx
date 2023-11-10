@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import './styles.css';
 import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import { useHistory } from 'react-router-dom';
 
 interface Props {
@@ -23,6 +23,7 @@ export default function RoomInfo(props: Props) {
             .then(() => {
                 localStorage.clear();
                 socket.emit('updateRoomPlayers', props.room_id);
+                socket.emit('sendMessage', { text: 'Saiu da sala', author: props.nickname });
                 history.push('/');
             })
             .catch((err) => {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ShowDraw from '../../components/ShowDraw';
 
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import { EnumRoundType } from '../../interfaces/iRound';
 
 import './styles.css';
@@ -26,7 +26,6 @@ export default function Answer(props: Props) {
                     sender_id: props.sender_id,
                     type: EnumRoundType.PHRASE,
                 };
-                console.log('data answer: ', data);
 
                 socket.emit('sendRound', data);
             } else {

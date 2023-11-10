@@ -1,70 +1,41 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
-import { Room } from '../../interfaces/iRoom';
-import { User } from '../../interfaces/iUser';
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 
 import './styles.css';
 
+import { UserContext } from '../../context/UserContext';
+
 export default function UserLogin() {
+    const history = useHistory();
     const [nickname, setNickname] = useState('');
     const [roomCode, setRoomCode] = useState('');
-    const [room, setRoom] = useState<Room>();
-    const [user, setUser] = useState<User>();
-    const history = useHistory();
 
-    const { getall, login } = useUser();
+    const { setRoom, setUser } = useContext(UserContext);
+    const { login } = useUser();
     const { join } = useRoom();
 
-    const handleLoginButton = async (e: any) => {
+    const handleLoginButton = (e: any) => {
         e.preventDefault();
-        await Promise.resolve(login({ username: nickname }))
+        login({ username: nickname })
             .then(async (user_data) => {
                 const room_data = await join({ room_code: roomCode, user_id: user_data.id });
-                setUser(user_data);
-                setRoom(room_data.room);
                 return { user_data, room_data };
             })
             .then(({ user_data, room_data }) => {
-                localStorage.setItem('nickname', nickname);
-                localStorage.setItem('user_id', user_data.id);
-                localStorage.setItem('roomCode', roomCode);
-                localStorage.setItem('room_id', room_data.room.id);
-                history.push('/home');
+                setUser(user_data);
+                setRoom(room_data.room);
+                history.push('/play');
                 socket.emit('updateRoomPlayers', room_data.room.id);
+                socket.emit('sendMessage', { text: 'Entrou na sala', author: nickname });
             })
             .catch((err) => {
                 console.error(err);
+                alert('This user is already logged in!');
             });
     };
-
-    // async function login(e) {
-    //     console.log(nickname, roomCode);
-    //     e.preventDefault();
-
-    //     try {
-
-    //         // const response =
-    //         const response = await api.post('user', { username: nickname });
-
-    //         // localStorage.setItem('tokenUser', response.data.token);
-    //         localStorage.setItem('nickname', nickname);
-    //         localStorage.setItem('roomCode', roomCode);
-
-    //         // socket.emit('sendMessage', { message: 'Entrou na sala', author: nickname });
-
-    //         // history.push('/home');
-
-    //         // socket.emit('login', { nickname: nickname, roomCode: roomCode });
-
-    //     } catch (err) {
-    //         console.log(err);
-    //         alert("Este usuário ja está logado");
-    //         console.log("Erro no login: " + err);
-    //     }
-    // }
 
     return (
         <div className="logon-container">

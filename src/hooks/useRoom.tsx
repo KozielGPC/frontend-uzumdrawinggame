@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { ExitRoom, JoinRoom, Room } from '../interfaces/iRoom';
+import { useCallback } from 'react';
+import { ExitRoom, JoinRoom } from '../interfaces/iRoom';
 import { RoomService } from '../services/RoomService';
 
 export const useRoom = () => {

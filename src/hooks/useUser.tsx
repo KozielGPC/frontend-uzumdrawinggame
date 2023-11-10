@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Login, Logoff, User } from '../interfaces/iUser';
+import { useCallback } from 'react';
+import { Login, Logoff } from '../interfaces/iUser';
 import { UserService } from '../services/UserService';
 
 export const useUser = () => {

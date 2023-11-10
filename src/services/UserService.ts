@@ -1,5 +1,5 @@
 import { Login, Logoff, User } from '../interfaces/iUser';
-import api from '../providers';
+import api from '../providers/api';
 
 const getall = () => api.get<User[]>('/user');
 
