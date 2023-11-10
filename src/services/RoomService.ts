@@ -1,5 +1,5 @@
 import { ExitRoom, JoinRoom, Room, RoomPlayers, RoomResponse } from '../interfaces/iRoom';
-import api from '../providers';
+import api from '../providers/api';
 
 const joinRoom = (join: JoinRoom) => api.post<RoomResponse>('/room', join);
 

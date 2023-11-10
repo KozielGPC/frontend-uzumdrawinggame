@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ShowDraw from '../../components/ShowDraw';
 
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import { EnumRoundType } from '../../interfaces/iRound';
 
 import './styles.css';

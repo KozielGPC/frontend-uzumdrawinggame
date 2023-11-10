@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 
 import './styles.css';
 

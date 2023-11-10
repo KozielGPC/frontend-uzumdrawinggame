@@ -4,7 +4,7 @@ import { CompactPicker } from 'react-color';
 import { FiTrash, FiArrowLeft } from 'react-icons/fi';
 import './styles.css';
 
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import { EnumRoundType } from '../../interfaces/iRound';
 
 interface Props {

@@ -3,7 +3,7 @@ import Draw from '../../components/Draw';
 import Answer from '../../components/Answer';
 import { v4 as uuidv4 } from 'uuid';
 
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import './styles.css';
 
 import ShowDraw from '../../components/ShowDraw';
@@ -13,7 +13,7 @@ import { useMatch } from '../../hooks/useMatch';
 import { EndMatch, Match, MatchRounds, Round } from '../../interfaces/iMatch';
 import { useRound } from '../../hooks/useRound';
 import { Content, EnumRoundType, ReceivingRound } from '../../interfaces/iRound';
-import api from '../../providers';
+import api from '../../providers/api';
 import Chat from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import UsersList from '../../components/UsersList';

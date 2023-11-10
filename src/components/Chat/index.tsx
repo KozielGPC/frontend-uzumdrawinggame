@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import socket from '../../components/Socket/index';
+import socket from '../../providers/socket';
 import './styles.css';
 
 interface Message {
