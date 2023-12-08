@@ -199,9 +199,9 @@ export default function RoomPage() {
         setFirstStart(0);
     }
 
-    if (room === null || user === null) {
-        history.push('/');
-    }
+    // if (room === null || user === null) {
+    //     history.push('/');
+    // }
     return (
         <div className="main-container">
             <div className="side">

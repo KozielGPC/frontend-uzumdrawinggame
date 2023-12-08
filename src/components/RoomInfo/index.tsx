@@ -4,6 +4,7 @@ import { useRoom } from '../../hooks/useRoom';
 import { useUser } from '../../hooks/useUser';
 import socket from '../../providers/socket';
 import { useHistory } from 'react-router-dom';
+import { Button, Col, Row, Typography } from 'antd';
 
 interface Props {
     nickname: string;
@@ -32,16 +33,20 @@ export default function RoomInfo(props: Props) {
     }, []);
 
     return (
-        <>
-            <div className="user-data">
-                <h2>Nick: {props.nickname}</h2>
-                <h2>Room: {props.roomCode}</h2>
-            </div>
-            <div className="red-button">
-                <button type="submit" onClick={() => handleLogOffButton()}>
+        <Row>
+            <Col>
+                <Typography.Title>Nick: {props.nickname}</Typography.Title>
+                <Typography.Title>Room: {props.roomCode}</Typography.Title>
+            </Col>
+            <Col>
+                <Button
+                    type="primary"
+                    // loading={loading}
+                    onClick={() => handleLogOffButton()}
+                >
                     Logout!
-                </button>
-            </div>
-        </>
+                </Button>
+            </Col>
+        </Row>
     );
 }

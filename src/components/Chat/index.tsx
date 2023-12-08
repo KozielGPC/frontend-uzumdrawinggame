@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { Input, Button, Card } from 'antd';
 import socket from '../../providers/socket';
-import './styles.css';
+
+const { TextArea } = Input;
 
 interface Message {
     text: string;
@@ -39,12 +41,10 @@ export default function Chat(props: Props) {
     }
 
     return (
-        <div className="chat">
-            <h2>Game chat</h2>
-
-            <div className="messages" id="chat">
-                {messages.map((m) => (
-                    <p className="m">
+        <Card title="Game chat">
+            <div id="chat">
+                {messages.map((m, index) => (
+                    <p key={index}>
                         <strong>{m.author + ': '}</strong>
                         {m.text}
                     </p>
@@ -58,10 +58,10 @@ export default function Chat(props: Props) {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 ></input>
-                <button type="submit" onClick={(e) => sendMessage(e)}>
+                <Button type="primary" onClick={(e) => sendMessage(e)}>
                     Send message
-                </button>
+                </Button>
             </form>
-        </div>
+        </Card>
     );
 }
